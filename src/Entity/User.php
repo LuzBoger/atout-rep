@@ -106,7 +106,7 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials(): void
     {
-        // TODO: Implement eraseCredentials() method.
+        $this->plainPassword = '';
     }
 
     public function getUserIdentifier(): string
