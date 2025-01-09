@@ -24,13 +24,21 @@
         <div class="text-2xl font-bold text-003D5B">Atout réparation</div>
         <nav>
             <ul class="flex space-x-6 text-003D5B">
-                <li><a href="{{ path('app_home') }}" class="hover:text-secondary-800">Accueil</a></li>
+                <li class="{% if '/home' in app.request.uri %}border-b-2 border-primary-700 {% endif %}"><a href="{{ path('app_home') }}" class="hover:text-secondary-800">Accueil</a></li>
                 <li><a href="#" class="hover:text-secondary-800">Présentation</a></li>
                 <li><a href="#" class="hover:text-secondary-800">Objectif</a></li>
                 <li><a href="#" class="hover:text-secondary-800">Curriculum vitae</a></li>
-                <li><a href="#" class="hover:text-secondary-800">Connexion</a></li>
-                <li><a href="#" class="hover:text-secondary-800">Inscription</a></li>
-                <li><a href="#" class="hover:text-secondary-800">Panier</a></li>
+                {% if app.user is defined and app.user is not null %}
+                    <li><a href="{{ path('app_logout') }}" class="hover:text-secondary-800">Déconnexion</a></li>
+                    <li class="{% if '/temp' in app.request.uri %}border-b-2 border-primary-700 {% endif %}"><a href="#" class="hover:text-secondary-800">Panier</a></li>
+                {% else %}
+                    <li class="{% if '/login' in app.request.uri %}border-b-2 border-primary-700 {% endif %}">
+                        <a href="{{ path('app_login') }}" class="hover:text-secondary-800">Connexion</a>
+                    </li>
+                    <li class="{% if '/register' in app.request.uri %}border-b-2 border-primary-700 {% endif %}">
+                        <a href="{{path('app_register')}}" class="hover:text-secondary-800">Inscription</a>
+                    </li>
+                {% endif %}
                 <li><a href="#" class="hover:text-secondary-800">Aide</a></li>
             </ul>
         </nav>
