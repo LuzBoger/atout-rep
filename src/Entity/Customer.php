@@ -10,30 +10,22 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: CustomerRepository::class)]
 class Customer extends User
 {
-    #[ORM\Column(length: 255)]
-    private ?string $city = null;
-
     /**
      * @var Collection<int, Request>
      */
     #[ORM\OneToMany(targetEntity: Request::class, mappedBy: 'client')]
     private Collection $requests;
 
+    /**
+     * @var Collection<int, Address>
+     */
+    #[ORM\OneToMany(targetEntity: Address::class, mappedBy: 'customer')]
+    private Collection $addresses;
+
     public function __construct()
     {
         $this->requests = new ArrayCollection();
-    }
-
-    public function getCity(): ?string
-    {
-        return $this->city;
-    }
-
-    public function setCity(string $city): static
-    {
-        $this->city = $city;
-
-        return $this;
+        $this->addresses = new ArrayCollection();
     }
 
     /**
@@ -60,6 +52,36 @@ class Customer extends User
             // set the owning side to null (unless already changed)
             if ($request->getClient() === $this) {
                 $request->setClient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Address>
+     */
+    public function getAddresses(): Collection
+    {
+        return $this->addresses;
+    }
+
+    public function addAddress(Address $address): static
+    {
+        if (!$this->addresses->contains($address)) {
+            $this->addresses->add($address);
+            $address->setCustomer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAddress(Address $address): static
+    {
+        if ($this->addresses->removeElement($address)) {
+            // set the owning side to null (unless already changed)
+            if ($address->getCustomer() === $this) {
+                $address->setCustomer(null);
             }
         }
 

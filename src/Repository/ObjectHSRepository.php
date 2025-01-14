@@ -16,6 +16,15 @@ class ObjectHSRepository extends ServiceEntityRepository
         parent::__construct($registry, ObjectHS::class);
     }
 
+    public function findByUser($user)
+    {
+        return $this->createQueryBuilder('o')
+            ->andWhere('o.client = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return ObjectHS[] Returns an array of ObjectHS objects
     //     */

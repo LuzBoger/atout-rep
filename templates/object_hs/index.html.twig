@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ObjectHS index{% endblock %}
+
+{% block body %}
+    <div class="container mx-auto mt-10">
+        <h1 class="text-2xl font-bold text-primary-700 mb-6">Liste des objets HS</h1>
+
+        <div class="overflow-x-auto">
+            <table class="table-auto w-full bg-white shadow-md rounded-lg overflow-hidden">
+                <thead class="bg-primary-700 text-white">
+                <tr>
+                    <th class="px-4 text-left">ID</th>
+                    <th class="px-4 text-left">Date de création</th>
+                    <th class="px-4 text-left">Date de modification</th>
+                    <th class="px-4 text-left">Statut</th>
+                    <th class="px-4 text-left">Nom</th>
+                    <th class="px-4 text-left">État</th>
+                    <th class="px-4 text-left">Âge</th>
+                    <th class="px-4 text-left">Détails</th>
+                    <th class="px-4 text-left">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for object_h in object_hs %}
+                    <tr class="hover:bg-secondary-100">
+                        <td class="px-4 py-2 border-b">{{ object_h.id }}</td>
+                        <td class="px-4 py-2 border-b">{{ object_h.creationDate ? object_h.creationDate|date('Y-m-d H:i:s') : '' }}</td>
+                        <td class="px-4 py-2 border-b">{{ object_h.ModificationDate ? object_h.ModificationDate|date('Y-m-d H:i:s') : '' }}</td>
+                        <td class="px-4 py-2 border-b text-primary-700 font-semibold">{{ object_h.status.value }}</td>
+                        <td class="px-4 py-2 border-b">{{ object_h.name }}</td>
+                        <td class="px-4 py-2 border-b text-primary-700 font-semibold ">{{ object_h.state.value }}</td>
+                        <td class="px-4 py-2 border-b">{{ object_h.age }}</td>
+                        <td class="px-4 py-2 border-b">{{ object_h.Details }}</td>
+                        <td class="px-4 py-2 border-b ">
+                            <div class="flex flex-col gap-4 items-center h-full">
+                                <a href="{{ path('app_object_hs_show', {'id': object_h.id}) }}"
+                                   class="text-primary-700 hover:underline font-semibold">Voir</a>
+                                <a href="{{ path('app_object_hs_edit', {'id': object_h.id}) }}"
+                                   class="text-warning-500 hover:underline font-semibold">Modifier</a>
+                            </div>
+
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="9" class="px-4 py-2 text-center text-error-500 font-semibold">Aucun enregistrement trouvé</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-4">
+            <a href="{{ path('app_object_hs_new') }}"
+               class="inline-block px-6 py-2 bg-primary-700 text-white rounded-lg hover:bg-primary-800">
+                Ajouter un nouvel objet HS
+            </a>
+        </div>
+    </div>
+{% endblock %}
+

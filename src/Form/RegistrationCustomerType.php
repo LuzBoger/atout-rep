@@ -45,12 +45,6 @@ class RegistrationCustomerType extends AbstractType
                 'attr' => [
                     'class' => $inputCssClass,
                 ],
-            ])
-            ->add('city', TextType::class, [
-                'label' => 'Ville',
-                'attr' => [
-                    'class' => $inputCssClass,
-                ],
             ]);
     }
 
