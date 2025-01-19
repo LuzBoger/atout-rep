@@ -8,18 +8,15 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: HomeRepairRepository::class)]
-#[ORM\InheritanceType("JOINED")]
-#[ORM\DiscriminatorColumn("repair_type", "string")]
-#[ORM\DiscriminatorMap(["painting" => Painting::class, "roofing" => Roofing::class])]
 abstract class HomeRepair extends Request
 {
     #[ORM\Column(length: 500)]
     private ?string $description = null;
 
     /**
-     * @var Collection<int, Photos>
+     * @var Collection<int, Photo>
      */
-    #[ORM\OneToMany(targetEntity: Photos::class, mappedBy: 'HomeRepair')]
+    #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'HomeRepair')]
     private Collection $photos;
 
     public function __construct()
@@ -40,14 +37,14 @@ abstract class HomeRepair extends Request
     }
 
     /**
-     * @return Collection<int, Photos>
+     * @return Collection<int, Photo>
      */
     public function getPhotos(): Collection
     {
         return $this->photos;
     }
 
-    public function addPhoto(Photos $photo): static
+    public function addPhoto(Photo $photo): static
     {
         if (!$this->photos->contains($photo)) {
             $this->photos->add($photo);
@@ -57,7 +54,7 @@ abstract class HomeRepair extends Request
         return $this;
     }
 
-    public function removePhoto(Photos $photo): static
+    public function removePhoto(Photo $photo): static
     {
         if ($this->photos->removeElement($photo)) {
             // set the owning side to null (unless already changed)

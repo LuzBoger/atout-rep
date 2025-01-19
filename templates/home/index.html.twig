@@ -3,5 +3,82 @@
 {% block title %}Page d'accueil{% endblock %}
 
 {% block body %}
+    <header class="bg-primary-700 text-white relative">
+        <div class="text-center py-16">
+            <div class="relative z-10">
+                {% if app.user %}
+                    <h1 class="text-4xl font-bold mb-4">Bienvenue sur votre espace personnel</h1>
+                    <p class="text-lg mb-8">Gérez vos réparations et découvrez nos services adaptés.</p>
+                    <a href="{{ path('app_home_content') }}" class="font-semibold text-primary-900 bg-white py-3 px-6 rounded-lg hover:bg-gray-200 transition-colors duration-300">
+                        Accéder à votre tableau de bord
+                    </a>
+                {% else %}
+                    <h1 class="text-4xl font-bold mb-4">Bienvenue sur Atout réparation</h1>
+                    <p class="text-lg mb-8">La réparation à moindre prix !</p>
+                    <a href="{{ path('app_login') }}" class="font-semibold text-primary-900 bg-white py-3 px-6 rounded-lg hover:bg-gray-200 transition-colors duration-300">
+                        S'inscrire
+                    </a>
+                {% endif %}
+            </div>
+            </div>
+        </div>
+    </header>
+
+    <section aria-labelledby="discover-section" class="py-16 bg-gray-100">
+        <div class="container mx-auto px-4 text-center">
+            <div class="mt-12 bg-gray-50 p-8 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">
+                    L'Histoire d'Atout réparation : Comment tout a commencé ?
+                </h2>
+                <p class="text-lg text-gray-700 mb-6">
+                    L'idée a germé dans un cerveau légèrement déjanté. Un soir, une simple question : "Pourquoi ne pas ajouter un peu de folie dans les vies des gens ?" Et voilà, Atout réparation est né !
+                </p>
+                <p class="text-lg text-gray-700 mb-6">
+                    Chez Atout réparation, nous sommes spécialisés dans la remise en état et la valorisation de vos biens, qu’ils soient endommagés ou simplement en quête de renouveau. Avec un savoir-faire précis et une approche centrée sur la qualité, notre objectif est de prolonger la durée de vie de vos objets tout en répondant à vos besoins spécifiques. Offrir une seconde vie à vos biens, c’est notre métier, et votre satisfaction est notre priorité.                </p>
+                <a href="#" class="text-blue-600 hover:text-blue-700 hover:underline">
+                    Cliquez ici pour découvrir notre histoire !
+                </a>
+            </div>
+
+            <h2 id="discover-section" class="text-3xl font-semibold text-gray-800 mb-6 mt-16">
+                Pourquoi choisir Atout réparation ?
+            </h2>
+
+            <p class="text-lg text-gray-700 mb-8">
+                Chez Atout Réparation, nous nous engageons à redonner vie à vos biens avec expertise et passion. Notre mission est de vous offrir des solutions fiables, durables et adaptées à vos besoins, tout en valorisant l'impact positif de la réparation sur l'environnement.
+            </p>
+
+            <div class="flex justify-center gap-8">
+                <div class="bg-white shadow-lg p-6 rounded-lg max-w-xs hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Un Concept Innovant</h3>
+                    <p class="text-gray-600">
+                        Nous allions expertise et créativité pour donner une nouvelle vie à vos biens, avec des solutions sur mesure et respectueuses de l’environnement.
+                    </p>
+                </div>
+                <div class="bg-white shadow-lg p-6 rounded-lg max-w-xs hover:shadow-xl transition-shadow duration-300">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Une Expérience Inoubliable</h3>
+                    <p class="text-gray-600">
+                        Chez Atout Réparation, chaque projet est une opportunité de créer un service de qualité, laissant une impression durable et positive.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="services" class="py-16">
+        <div class="container mx-auto text-center">
+            <h2 class="text-3xl font-semibold mb-6">Nos Services</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {#  {% for service in services %}
+                    <div class="bg-white rounded-lg p-6">
+                        <div class="text-6xl mb-4 text-indigo-500">{{ service.icon }}</div>
+                        <h3 class="text-2xl font-semibold text-gray-900 mb-4">{{ service.title }}</h3>
+                        <p class="text-gray-700">{{ service.description }}</p>
+                    </div>
+                {% endfor %}#}
+            </div>
+        </div>
+    </section>
 
 {% endblock %}

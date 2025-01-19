@@ -1,0 +1,16 @@
+{% macro step(number, title, description, active) %}
+    <li class="flex items-center space-x-2.5 rtl:space-x-reverse">
+    <span class="flex items-center justify-center w-8 h-8 border rounded-full
+        {% if active %}bg-primary-700 text-white border-primary-700{% else %}bg-gray-300 text-gray-600 border-gray-500{% endif %}">
+        {{ number }}
+    </span>
+        <span>
+        <h3 class="font-medium leading-tight {% if active %}text-primary-700 dark:text-primary-600{% else %}text-gray-500 dark:text-gray-400{% endif %}">
+            {{ title }}
+        </h3>
+        <p class="text-sm {% if active %}text-primary-700 dark:text-primary-600{% else %}text-gray-500 dark:text-gray-400{% endif %}">
+            {{ description }}
+        </p>
+    </span>
+    </li>
+{% endmacro %}

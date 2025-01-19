@@ -25,6 +25,16 @@ class ObjectHSRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findByUserWithMaximumOfThree($user)
+    {
+        return $this->createQueryBuilder('o')
+            ->andWhere('o.client = :user')
+            ->setParameter('user', $user)
+            ->setMaxResults(3)
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return ObjectHS[] Returns an array of ObjectHS objects
     //     */

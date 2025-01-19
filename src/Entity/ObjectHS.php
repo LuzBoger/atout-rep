@@ -24,9 +24,9 @@ class ObjectHS extends Request
     private ?string $Details = null;
 
     /**
-     * @var Collection<int, Photos>
+     * @var Collection<int, Photo>
      */
-    #[ORM\OneToMany(targetEntity: Photos::class, mappedBy: 'ObjectHS')]
+    #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'ObjectHS')]
     private Collection $photos;
 
     public function __construct()
@@ -83,14 +83,14 @@ class ObjectHS extends Request
     }
 
     /**
-     * @return Collection<int, Photos>
+     * @return Collection<int, Photo>
      */
     public function getPhotos(): Collection
     {
         return $this->photos;
     }
 
-    public function addPhoto(Photos $photo): static
+    public function addPhoto(Photo $photo): static
     {
         if (!$this->photos->contains($photo)) {
             $this->photos->add($photo);
@@ -100,7 +100,7 @@ class ObjectHS extends Request
         return $this;
     }
 
-    public function removePhoto(Photos $photo): static
+    public function removePhoto(Photo $photo): static
     {
         if ($this->photos->removeElement($photo)) {
             // set the owning side to null (unless already changed)

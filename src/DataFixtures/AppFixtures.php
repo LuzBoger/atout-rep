@@ -8,9 +8,8 @@ use App\Entity\Customer;
 use App\Entity\Dates;
 use App\Entity\ObjectHS;
 use App\Entity\Painting;
-use App\Entity\Photos;
+use App\Entity\Photo;
 use App\Entity\Provider;
-use App\Entity\Request;
 use App\Entity\Roofing;
 use App\Enum\PaintType;
 use App\Enum\RoofMaterial;
@@ -102,9 +101,9 @@ class AppFixtures extends Fixture
                     $objectHS->setDetails($faker->text(200));
                     $manager->persist($objectHS);
 
-                    // Create Photos for ObjectHS
+                    // Create Photo for ObjectHS
                     for ($m = 0; $m < rand(1, 3); $m++) {
-                        $photo = new Photos();
+                        $photo = new Photo();
                         $photo->setName($faker->word());
                         $photo->setPhotoPath($faker->imageUrl());
                         $photo->setUploadDate($faker->dateTimeThisYear());
@@ -127,9 +126,9 @@ class AppFixtures extends Fixture
                     $roofing->setDescription($faker->text(300));
                     $manager->persist($roofing);
 
-                    // Create Photos for Roofing
+                    // Create Photo for Roofing
                     for ($m = 0; $m < rand(1, 3); $m++) {
-                        $photo = new Photos();
+                        $photo = new Photo();
                         $photo->setName($faker->word());
                         $photo->setPhotoPath($faker->imageUrl());
                         $photo->setUploadDate($faker->dateTimeThisYear());
@@ -152,9 +151,9 @@ class AppFixtures extends Fixture
                     $painting->setDescription($faker->text(300));
                     $manager->persist($painting);
 
-                    // Create Photos for Painting
+                    // Create Photo for Painting
                     for ($m = 0; $m < rand(1, 3); $m++) {
-                        $photo = new Photos();
+                        $photo = new Photo();
                         $photo->setName($faker->word());
                         $photo->setPhotoPath($faker->imageUrl());
                         $photo->setUploadDate($faker->dateTimeThisYear());
@@ -167,13 +166,15 @@ class AppFixtures extends Fixture
                 for ($l = 0; $l < rand(1, 2); $l++) {
                     $date = new Dates();
                     $date->setDate($faker->dateTimeThisMonth());
-                    $date->setRequest($objectHS ?? $roofing ?? $painting); // Link to the last created request
+                    $date->setRequest($objectHS ?? $roofing ?? $painting);
                     $date->setAddress($faker->randomElement($addresses));
                     $manager->persist($date);
                 }
             }
         }
+
         $manager->flush();
+
     }
 
 }

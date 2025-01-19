@@ -31,7 +31,7 @@ class ObjectHSType extends AbstractType
                 ],
             ])
             ->add('state', EnumType::class, [
-                'class' => StateObject::class, // L'Enum à utiliser
+                'class' => StateObject::class,
                 'label' => 'État de l\'objet',
                 'choice_label_callback' => fn(StateObject $state) => match ($state) {
                     StateObject::NEW => 'Neuf',
@@ -54,7 +54,7 @@ class ObjectHSType extends AbstractType
             ->add('Details', TextareaType::class, [
                 'label' => 'Détails supplémentaires',
                 'attr' => [
-                    'class' => $inputCssClass,
+                    'class' => $inputCssClass . " col-span-2",
                     'rows' => 4,
                 ],
             ]);

@@ -3,48 +3,133 @@
 {% block title %}ObjectHS{% endblock %}
 
 {% block body %}
-    <h1>ObjectHS</h1>
+    <div class="flex flex-col gap-8">
+        <h1 class="text-4xl font-bold text-gray-800 mb-6">Demande de réparation : {{ object_h.name }}</h1>
+        <div class="flex max-xl:flex-col gap-8">
+            <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                <table class="table-auto w-full">
+                    <tbody class="divide-y divide-gray-200">
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 font-semibold text-gray-700">ID</td>
+                        <td class="px-6 py-4 text-gray-600">{{ object_h.id }}</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 font-semibold text-gray-700">Date de création</td>
+                        <td class="px-6 py-4 text-gray-600">{{ object_h.creationDate ? object_h.creationDate|date('Y-m-d H:i:s') : '' }}</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 font-semibold text-gray-700">Date de modification</td>
+                        <td class="px-6 py-4 text-gray-600">{{ object_h.ModificationDate ? object_h.ModificationDate|date('Y-m-d H:i:s') : '' }}</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 font-semibold text-gray-700">Statut</td>
+                        <td class="px-6 py-4 text-primary-700 font-semibold">{{ object_h.status.value }}</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 font-semibold text-gray-700">Nom</td>
+                        <td class="px-6 py-4 text-gray-600">{{ object_h.name }}</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 font-semibold text-gray-700">État</td>
+                        <td class="px-6 py-4 text-primary-700 font-semibold">{{ object_h.state.value }}</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 font-semibold text-gray-700">Âge</td>
+                        <td class="px-6 py-4 text-gray-600">{{ object_h.age }}</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 font-semibold text-gray-700">Détails</td>
+                        <td class="px-6 py-4 text-gray-600">{{ object_h.Details }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="flex justify-around gap-4 mb-4">
+                    <a href="{{ path('app_object_hs_index') }}"
+                       class="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600">
+                        Retour à la liste
+                    </a>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ object_h.id }}</td>
-            </tr>
-            <tr>
-                <th>CreationDate</th>
-                <td>{{ object_h.creationDate ? object_h.creationDate|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>ModificationDate</th>
-                <td>{{ object_h.ModificationDate ? object_h.ModificationDate|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Status</th>
-                <td>{{ object_h.status }}</td>
-            </tr>
-            <tr>
-                <th>Name</th>
-                <td>{{ object_h.name }}</td>
-            </tr>
-            <tr>
-                <th>State</th>
-                <td>{{ object_h.state }}</td>
-            </tr>
-            <tr>
-                <th>Age</th>
-                <td>{{ object_h.age }}</td>
-            </tr>
-            <tr>
-                <th>Details</th>
-                <td>{{ object_h.Details }}</td>
-            </tr>
-        </tbody>
-    </table>
+                    <a href="{{ path('app_object_hs_edit', {'id': object_h.id}) }}"
+                       class="bg-warning-500 text-white px-4 py-2 rounded-lg hover:bg-warning-600">
+                        Modifier
+                    </a>
+                </div>
+            </div>
+            <div class="flex flex-col gap-8 w-full">
+                <table class="table-auto bg-white shadow-md rounded-lg overflow-hidden h-fit">
+                    <thead class="bg-primary-700 text-white">
+                    <tr>
+                        <th class="px-4 py-2 text-left">Date</th>
+                        <th class="px-4 py-2 text-left">Adresse</th>
+                        <th class="px-4 py-2 text-left">Code Postal</th>
+                        <th class="px-4 py-2 text-left">Ville</th>
+                    </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                    {% for date in object_h.getDates() %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-2">{{ date.date ? date.date|date('d/m/Y H:i') : 'Non défini' }}</td>
+                            <td class="px-4 py-2">{{ date.address ? date.address.address : 'Non défini' }}</td>
+                            <td class="px-4 py-2">{{ date.address ? date.address.PostalCode : 'Non défini' }}</td>
+                            <td class="px-4 py-2">{{ date.address ? date.address.city : 'Non défini' }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="px-4 py-2 text-center text-error-500 font-semibold">
+                                Aucun rendez-vous trouvé.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <table class="table-auto bg-white shadow-md rounded-lg overflow-hidden h-fit">
+                    <thead class="bg-primary-700 text-white">
+                    <tr>
+                        <th class="px-4 py-2 text-left">Photo</th>
+                        <th class="px-4 py-2 text-left">Nom</th>
+                        <th class="px-4 py-2 text-left">Lien</th>
+                        <th class="px-4 py-2 text-left">Date de téléchargement</th>
+                    </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                    {% for photo in object_h.getPhotos() %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-2">
+                                {% if photo.photoPath %}
+                                    <img src="{{ asset('uploads/photos/' ~ photo.photoPath) }}" alt="{{ photo.name }}" class="w-20 h-20 object-cover rounded-lg">
+                                {% else %}
+                                    <span class="text-error-500">Non disponible</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-4 py-2">{{ photo.name }}</td>
+                            <td class="px-4 py-2">
+                                {% if photo.photoPath %}
+                                    <a href="{{ asset('uploads/photos/' ~ photo.photoPath) }}" target="_blank" class="text-primary-500 hover:underline">
+                                        Voir la photo
+                                    </a>
+                                {% else %}
+                                    Non défini
+                                {% endif %}
+                            </td>
+                            <td class="px-4 py-2">
+                                {{ photo.uploadDate ? photo.uploadDate|date('d/m/Y H:i') : 'Non défini' }}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="px-4 py-2 text-center text-error-500 font-semibold">
+                                Aucune photo trouvée.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="flex W-full justify-center gap-4">
+            {{ include('object_hs/_delete_form.html.twig') }}
+        </div>
+        
+    </div>
 
-    <a href="{{ path('app_object_h_s_index') }}">back to list</a>
-
-    <a href="{{ path('app_object_hs_edit', {'id': object_h.id}) }}">edit</a>
-
-    {{ include('object_hs/_delete_form.html.twig') }}
 {% endblock %}

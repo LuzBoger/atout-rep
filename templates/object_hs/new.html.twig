@@ -1,39 +1,30 @@
 {% extends 'base.html.twig' %}
+{% import 'components/stepper.html.twig' as stepComponent %}
 
 {% block title %}New ObjectHS{% endblock %}
 
 {% block body %}
-    <div class="container mx-auto mt-10 bg-white p-6 rounded-lg shadow-md">
-        <h1 class="text-2xl font-semibold text-primary-700 mb-6">
+    <div class=" w-3/4 max-sm:w-96 container mx-auto mt-10 bg-white px-16 py-8 rounded-lg shadow-md flex flex-col gap-8">
+        <h1 class="text-2xl font-semibold text-primary-700">
             {% if step == 1 %} Étape 1 : Informations sur l'objet {% endif %}
             {% if step == 2 %} Étape 2 : Date associée {% endif %}
         </h1>
-
-        <!-- Barre de progression -->
-        <div class="flex items-center mb-6">
-            <div class="w-1/2 text-center">
-                <div class="w-8 h-8 mx-auto flex items-center justify-center border rounded-full {% if step >= 1 %}bg-primary-700 text-white{% else %}bg-gray-300 text-gray-600{% endif %}">
-                    1
-                </div>
-                <p class="mt-2">Objet</p>
-            </div>
-            <div class="flex-1 border-t {% if step >= 2 %}border-primary-700{% else %}border-gray-300{% endif %}"></div>
-            <div class="w-1/2 text-center">
-                <div class="w-8 h-8 mx-auto flex items-center justify-center border rounded-full {% if step >= 2 %}bg-primary-700 text-white{% else %}bg-gray-300 text-gray-600{% endif %}">
-                    2
-                </div>
-                <p class="mt-2">Date</p>
-            </div>
-        </div>
-
+        <ol class="items-center w-full flex justify-around max-lg:flex-col max-lg:items-start max-lg:gap-4">
+            {{ stepComponent.step(1, 'Objet', 'Description de l\'objet', step >= 1) }}
+            {{ stepComponent.step(2, 'Date', 'Choisissez une date', step >= 2) }}
+            {{ stepComponent.step(3, 'Photos', 'Informations supplémentaire', step >= 3) }}
+        </ol>
         <!-- Formulaires -->
         {% if step == 1 %}
             {{ form_start(formObjectHS) }}
-            <div class="space-y-4">
+            <div class="grid grid-cols-2 gap-4 max-lg:flex max-lg:flex-col">
                 {{ form_row(formObjectHS.name) }}
                 {{ form_row(formObjectHS.state) }}
                 {{ form_row(formObjectHS.age) }}
-                {{ form_row(formObjectHS.Details) }}
+                <div class="col-span-2">
+                    {{ form_row(formObjectHS.Details) }}
+                </div>
+                
             </div>
             <button type="submit" class="mt-6 px-4 py-2 bg-primary-700 text-white rounded-lg hover:bg-primary-800">
                 Suivant
@@ -43,14 +34,96 @@
 
         {% if step == 2 %}
             {{ form_start(formDates) }}
-            <div class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
                 {{ form_row(formDates.date) }}
                 {{ form_row(formDates.address) }}
             </div>
             <button type="submit" class="mt-6 px-4 py-2 bg-primary-700 text-white rounded-lg hover:bg-primary-800">
-                Terminer
+                Suivant
             </button>
             {{ form_end(formDates) }}
         {% endif %}
+
+        {% if step == 3 %}
+            {{ form_start(formPhotos) }}
+
+            <div id="photos-collection" data-prototype="{{ form_widget(formPhotos.photos.vars.prototype)|e('html_attr') }}" class="space-y-6">
+    {% for photoForm in formPhotos.photos %}
+        <div class="photo-item flex flex-col gap-4 border border-gray-300 p-4 rounded-lg shadow-md">
+            <div>
+                {{ form_label(photoForm.name, 'Nom de la photo') }}
+                {{ form_widget(photoForm.name) }}
+                {% if photoForm.name.vars.errors is not empty %}
+                    <div class="text-red-500 text-sm mt-1">
+                        {{ photoForm.name.vars.errors|first.message }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div>
+                {{ form_label(photoForm.photoPath, 'Télécharger la photo') }}
+                {{ form_widget(photoForm.photoPath) }}
+                {% if photoForm.photoPath.vars.errors is not empty %}
+                    <div class="text-red-500 text-sm mt-1">
+                        {{ photoForm.photoPath.vars.errors|first.message }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <button type="button" class="remove-photo self-end bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                Supprimer
+            </button>
+        </div>
+    {% endfor %}
+</div>
+
+            <div class="flex gap-4 mt-6">
+                <button type="button" id="add-photo" class="bg-primary-700 text-white px-4 py-2 rounded-lg hover:bg-primary-800">
+                    Ajouter une photo
+                </button>
+                <button type="submit" class="bg-success-700 text-white px-4 py-2 rounded-lg hover:bg-success-800">
+                    Terminer
+                </button>
+            </div>
+
+            {{ form_end(formPhotos) }}
+
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    const collectionHolder = document.getElementById('photos-collection');
+                    const addPhotoButton = document.getElementById('add-photo');
+
+                    // Prototype pour les nouveaux champs
+                    const prototype = collectionHolder.dataset.prototype;
+                    let index = collectionHolder.children.length;
+
+                    // Ajout d'un champ de photo
+                    addPhotoButton.addEventListener('click', () => {
+                        const newForm = prototype.replace(/__name__/g, index);
+                        const newFormElement = document.createElement('div');
+                        newFormElement.classList.add(
+                            'photo-item', 'flex', 'flex-col', 'gap-4',
+                            'border', 'border-gray-300', 'p-4', 'rounded-lg', 'shadow-md', 'mb-6'
+                        );
+                        newFormElement.innerHTML = newForm;
+                        newFormElement.innerHTML += `
+                            <button type="button" class="remove-photo self-end bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                                Supprimer
+                            </button>`;
+                        collectionHolder.appendChild(newFormElement);
+                        index++;
+                    });
+
+                    // Suppression d'un champ de photo
+                    collectionHolder.addEventListener('click', (event) => {
+                        if (event.target.classList.contains('remove-photo')) {
+                            event.target.closest('.photo-item').remove();
+                        }
+                    });
+                });
+            </script>
+        {% endif %}
+
+
     </div>
 {% endblock %}

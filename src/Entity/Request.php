@@ -11,8 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RequestRepository::class)]
 #[ORM\InheritanceType("JOINED")]
-#[ORM\DiscriminatorColumn("demande_type", "string")]
-#[ORM\DiscriminatorMap(["objectHS" => ObjectHS::class, "homeRepair" => HomeRepair::class])]
+#[ORM\DiscriminatorColumn(name: "demande_type", type: "string")]
+#[ORM\DiscriminatorMap(["objectHS" => ObjectHS::class, "painting" => Painting::class, "roofing" => Roofing::class])]
 class Request
 {
     #[ORM\Id]
