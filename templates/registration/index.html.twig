@@ -7,15 +7,73 @@
         <h1 class="text-2xl font-semibold text-003D5B mb-4">Créer un compte</h1>
 
         {{ form_start(form) }}
-        {{ form_row(form.name) }}
-        {{ form_row(form.surname) }}
-        {{ form_row(form.email) }}
-        {{ form_row(form.phone) }}
-        {{ form_row(form.plainPassword) }}
-        <button type="submit" class="w-full px-4 py-2 mt-2 bg-primary-700 text-white rounded-lg hover:bg-primary-800 focus:outline-none">
+
+        <div>
+            <label for="{{ form.name.vars.id }}" class="block text-sm font-medium text-gray-700">
+                {{ form.name.vars.label }}
+            </label>
+            {{ form_widget(form.name, {
+                'attr': {
+                    'class': 'mt-1 block w-full border p-2 border-gray-300 rounded-md shadow-sm focus:ring-secondary-500 focus:border-secondary-500'
+                }
+            }) }}
+            {{ form_errors(form.name) }}
+        </div>
+
+        <div>
+            <label for="{{ form.surname.vars.id }}" class="block text-sm font-medium text-gray-700">
+                {{ form.surname.vars.label }}
+            </label>
+            {{ form_widget(form.surname, {
+                'attr': {
+                    'class': 'mt-1 block w-full border p-2 border-gray-300 rounded-md shadow-sm focus:ring-secondary-500 focus:border-secondary-500'
+                }
+            }) }}
+            {{ form_errors(form.surname) }}
+        </div>
+
+        <div>
+            <label for="{{ form.email.vars.id }}" class="block text-sm font-medium text-gray-700">
+                {{ form.email.vars.label }}
+            </label>
+            {{ form_widget(form.email, {
+                'attr': {
+                    'class': 'mt-1 block w-full border p-2 border-gray-300 rounded-md shadow-sm focus:ring-secondary-500 focus:border-secondary-500'
+                }
+            }) }}
+            {{ form_errors(form.email) }}
+        </div>
+
+        <div>
+            <label for="{{ form.phone.vars.id }}" class="block text-sm font-medium text-gray-700">
+                {{ form.phone.vars.label }}
+            </label>
+            {{ form_widget(form.phone, {
+                'attr': {
+                    'class': 'mt-1 block w-full border p-2 border-gray-300 rounded-md shadow-sm focus:ring-secondary-500 focus:border-secondary-500'
+                }
+            }) }}
+            {{ form_errors(form.phone) }}
+        </div>
+
+        <div>
+            <label for="{{ form.plainPassword.vars.id }}" class="block text-sm font-medium text-gray-700">
+                {{ form.plainPassword.vars.label }}
+            </label>
+            {{ form_widget(form.plainPassword, {
+                'attr': {
+                    'class': 'mt-1 block w-full border p-2 border-gray-300 rounded-md shadow-sm focus:ring-secondary-500 focus:border-secondary-500'
+                }
+            }) }}
+            {{ form_errors(form.plainPassword) }}
+        </div>
+
+        <button type="submit" class="w-full px-4 py-2 mt-4 bg-primary-700 text-white rounded-lg hover:bg-primary-800 focus:outline-none">
             S'inscrire
         </button>
+
         {{ form_end(form) }}
+
 
         {% for message in app.flashes('success') %}
             <div class="alert alert-success">{{ message }}</div>

@@ -39,6 +39,12 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private array $roles = [];
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $resetPasswordToken = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $resetTokenExpireAt = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -134,5 +140,29 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getPlainPassword(): string
     {
         return $this->plainPassword;
+    }
+
+    public function getResetPasswordToken(): ?string
+    {
+        return $this->resetPasswordToken;
+    }
+
+    public function setResetPasswordToken(?string $resetPasswordToken): static
+    {
+        $this->resetPasswordToken = $resetPasswordToken;
+
+        return $this;
+    }
+
+    public function getResetTokenExpireAt(): ?\DateTimeImmutable
+    {
+        return $this->resetTokenExpireAt;
+    }
+
+    public function setResetTokenExpireAt(?\DateTimeImmutable $resetTokenExpireAt): static
+    {
+        $this->resetTokenExpireAt = $resetTokenExpireAt;
+
+        return $this;
     }
 }

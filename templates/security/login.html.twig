@@ -4,7 +4,7 @@
 
 {% block body %}
     <div class="max-w-md mx-auto mt-10 bg-white p-6 rounded-lg shadow-md">
-        <form method="post" class="space-y-6">
+        <form method="post" class="space-y-4">
             {% if error %}
                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
                     {{ error.messageKey|trans(error.messageData, 'security') }}
@@ -36,11 +36,15 @@
 
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-            <div>
+            <div class="flex flex-col gap-2">
                 <button type="submit" class="w-full px-4 py-2 bg-primary-700 text-white rounded-lg hover:bg-primary-800 focus:outline-none">
                     Se connecter
                 </button>
+                <a href="{{ path('app_forgot_password') }}" class="text-primary-800 underline cursor-pointer transition hover:text-primary-900">
+                    Vous avez oubliez votre mot de passe ?
+                </a>
             </div>
+
         </form>
     </div>
 {% endblock %}
