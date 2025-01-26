@@ -16,6 +16,25 @@ class HomeRepairRepository extends ServiceEntityRepository
         parent::__construct($registry, HomeRepair::class);
     }
 
+    public function findByUserWithMaximumOfThree($user)
+    {
+        return $this->createQueryBuilder('o')
+            ->andWhere('o.client = :user')
+            ->setParameter('user', $user)
+            ->setMaxResults(3)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByUser($user)
+    {
+        return $this->createQueryBuilder('o')
+            ->andWhere('o.client = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return HomeRepair[] Returns an array of HomeRepair objects
     //     */

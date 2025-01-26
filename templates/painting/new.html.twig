@@ -1,35 +1,37 @@
 {% extends 'base.html.twig' %}
+
+{% block title %}New Painting{% endblock %}
+
 {% import 'components/stepper.html.twig' as stepComponent %}
 
-{% block title %}New ObjectHS{% endblock %}
-
 {% block body %}
-    <div class=" w-3/4 max-sm:w-96 container mx-auto mt-10 bg-white px-16 py-8 rounded-lg shadow-md flex flex-col gap-8">
+    <div class="w-3/4 max-sm:w-96 container mx-auto mt-10 bg-white px-16 py-8 rounded-lg shadow-md flex flex-col gap-8">
         <h1 class="text-2xl font-semibold text-primary-700">
-            {% if step == 1 %} Étape 1 : Informations sur l'objet {% endif %}
-            {% if step == 2 %} Étape 2 : Date associée {% endif %}
+            {% if step == 1 %} Étape 1 : Informations sur le projet de peinture {% endif %}
+            {% if step == 2 %} Étape 2 : Planification et localisation {% endif %}
+            {% if step == 3 %} Étape 3 : Ajout des photos {% endif %}
         </h1>
+
         <ol class="flex items-center w-full p-3 space-x-4 text-sm font-medium text-center text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm sm:text-base rtl:space-x-reverse max-lg:flex-col max-lg:items-start max-lg:gap-4">
-            {{ stepComponent.step(1, 'Objet', step >= 1, false) }}
-            {{ stepComponent.step(2, 'Date', step >= 2, false) }}
+            {{ stepComponent.step(1, 'Projet', step >= 1, false) }}
+            {{ stepComponent.step(2, 'Date et adresse', step >= 2, false) }}
             {{ stepComponent.step(3, 'Photos', step >= 3, true) }}
         </ol>
+
         <!-- Formulaires -->
         {% if step == 1 %}
-            {{ form_start(formObjectHS) }}
+            {{ form_start(formPainting) }}
             <div class="grid grid-cols-2 gap-4 max-lg:flex max-lg:flex-col">
-                {{ form_row(formObjectHS.name) }}
-                {{ form_row(formObjectHS.state) }}
-                {{ form_row(formObjectHS.age) }}
+                {{ form_row(formPainting.surfaceArea) }}
+                {{ form_row(formPainting.paintType) }}
                 <div class="col-span-2">
-                    {{ form_row(formObjectHS.Details) }}
+                    {{ form_row(formPainting.description) }}
                 </div>
-                
             </div>
             <button type="submit" class="mt-6 px-4 py-2 bg-primary-700 text-white rounded-lg hover:bg-primary-800">
                 Suivant
             </button>
-            {{ form_end(formObjectHS) }}
+            {{ form_end(formPainting) }}
         {% endif %}
 
         {% if step == 2 %}
@@ -48,34 +50,34 @@
             {{ form_start(formPhotos) }}
 
             <div id="photos-collection" data-prototype="{{ form_widget(formPhotos.photos.vars.prototype)|e('html_attr') }}" class="space-y-6">
-    {% for photoForm in formPhotos.photos %}
-        <div class="photo-item flex flex-col gap-4 border border-gray-300 p-4 rounded-lg shadow-md">
-            <div>
-                {{ form_label(photoForm.name, 'Nom de la photo') }}
-                {{ form_widget(photoForm.name) }}
-                {% if photoForm.name.vars.errors is not empty %}
-                    <div class="text-red-500 text-sm mt-1">
-                        {{ photoForm.name.vars.errors|first.message }}
-                    </div>
-                {% endif %}
-            </div>
+                {% for photoForm in formPhotos.photos %}
+                    <div class="photo-item flex flex-col gap-4 border border-gray-300 p-4 rounded-lg shadow-md">
+                        <div>
+                            {{ form_label(photoForm.name, 'Nom de la photo') }}
+                            {{ form_widget(photoForm.name) }}
+                            {% if photoForm.name.vars.errors is not empty %}
+                                <div class="text-red-500 text-sm mt-1">
+                                    {{ photoForm.name.vars.errors|first.message }}
+                                </div>
+                            {% endif %}
+                        </div>
 
-            <div>
-                {{ form_label(photoForm.photoPath, 'Télécharger la photo') }}
-                {{ form_widget(photoForm.photoPath) }}
-                {% if photoForm.photoPath.vars.errors is not empty %}
-                    <div class="text-red-500 text-sm mt-1">
-                        {{ photoForm.photoPath.vars.errors|first.message }}
-                    </div>
-                {% endif %}
-            </div>
+                        <div>
+                            {{ form_label(photoForm.photoPath, 'Télécharger la photo') }}
+                            {{ form_widget(photoForm.photoPath) }}
+                            {% if photoForm.photoPath.vars.errors is not empty %}
+                                <div class="text-red-500 text-sm mt-1">
+                                    {{ photoForm.photoPath.vars.errors|first.message }}
+                                </div>
+                            {% endif %}
+                        </div>
 
-            <button type="button" class="remove-photo self-end bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
-                Supprimer
-            </button>
-        </div>
-    {% endfor %}
-</div>
+                        <button type="button" class="remove-photo self-end bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                            Supprimer
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
 
             <div class="flex gap-4 mt-6">
                 <button type="button" id="add-photo" class="bg-primary-700 text-white px-4 py-2 rounded-lg hover:bg-primary-800">
@@ -123,7 +125,5 @@
                 });
             </script>
         {% endif %}
-
-
     </div>
 {% endblock %}

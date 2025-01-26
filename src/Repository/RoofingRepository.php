@@ -16,6 +16,18 @@ class RoofingRepository extends ServiceEntityRepository
         parent::__construct($registry, Roofing::class);
     }
 
+    public function findByUser($user)
+    {
+        return $this->createQueryBuilder('o')
+            ->andWhere('o.client = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
+    }
+
+
+
+
     //    /**
     //     * @return Roofing[] Returns an array of Roofing objects
     //     */

@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\HomeRepair;
+use App\Repository\HomeRepairRepository;
 use App\Repository\ObjectHSRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -18,14 +20,25 @@ class HomeController extends AbstractController
             'controller_name' => 'HomeController',
         ]);
     }
-    #[Route('/home', name: 'app_home_content')]
+    #[Route('/dashboard', name: 'app_dashboard_content')]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
-    public function app_home_content(Security $security, ObjectHSRepository $objectHSRepository): Response
+    public function app_dashboard_content(Security $security, ObjectHSRepository $objectHSRepository, HomeRepairRepository $homeRepairRepository): Response
     {
         $user = $security->getUser();
         $objectHS = $objectHSRepository->findByUserWithMaximumOfThree($user);
+        $homeRepairs = $homeRepairRepository->findByUserWithMaximumOfThree($user);
+
+        // Ajouter les types aux objets
+        $homeRepairsWithTypes = array_map(function (HomeRepair $repair) {
+            return [
+                'repair' => $repair,
+                'type' => $repair->getType(), // Appel de la méthode définie dans les enfants
+            ];
+        }, $homeRepairs);
+
         return $this->render('home/content.html.twig', [
             'object_hs' => $objectHS,
+            'home_repairs_with_types' => $homeRepairsWithTypes,
         ]);
     }
 }

@@ -16,6 +16,11 @@ class Painting extends HomeRepair
     #[ORM\Column(enumType: PaintType::class)]
     private ?PaintType $paintType = null;
 
+    public function getType(): string
+    {
+        return 'Painting';
+    }
+
     public function getSurfaceArea(): ?int
     {
         return $this->surfaceArea;

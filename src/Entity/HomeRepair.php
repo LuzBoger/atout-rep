@@ -19,6 +19,8 @@ abstract class HomeRepair extends Request
     #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'HomeRepair')]
     private Collection $photos;
 
+    abstract public function getType(): string;
+
     public function __construct()
     {
         $this->photos = new ArrayCollection();

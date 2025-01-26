@@ -16,6 +16,11 @@ class Roofing extends HomeRepair
     #[ORM\Column]
     private ?bool $needInsulation = null;
 
+    public function getType(): string
+    {
+        return 'Roofing';
+    }
+
     public function getRoofMaterial(): ?RoofMaterial
     {
         return $this->roofMaterial;

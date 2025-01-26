@@ -1,0 +1,41 @@
+<div class="overflow-auto lg:overflow-visible">
+    <table class="table-auto w-full text-sm border-separate border-spacing-y-3 border-spacing-x-0">
+        <thead class="bg-primary-700 text-white">
+        <tr>
+            <th class="p-3 rounded-l-lg">ID</th>
+            <th class="p-3 text-left">Date de création</th>
+            <th class="p-3 text-left">Date de modification</th>
+            <th class="p-3 text-left">Statut</th>
+            <th class="p-3 text-left">Description</th>
+            <th class="p-3 text-left">Matériau du toit</th>
+            <th class="p-3 text-left">Isolation nécessaire</th>
+            <th class="p-3 text-left rounded-r-lg">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for roofing in roofings %}
+            <tr class="bg-white rounded-lg">
+                <td class="p-3 rounded-l-lg">{{ roofing.id }}</td>
+                <td class="p-3">{{ roofing.creationDate ? roofing.creationDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td class="p-3">{{ roofing.ModificationDate ? roofing.ModificationDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td class="p-3">{{ roofing.status.value }}</td>
+                <td class="p-3">{{ roofing.description }}</td>
+                <td class="p-3">{{ roofing.roofMaterial.value }}</td>
+                <td class="p-3">{{ roofing.needInsulation ? 'Oui' : 'Non' }}</td>
+                <td class="p-3 rounded-r-lg">
+                    <div class="flex flex-col gap-4 items-center h-full">
+                        <a href="{{ path('app_home_repair_show', {'id': roofing.id}) }}"
+                           class="text-primary-700 hover:underline font-semibold">Voir</a>
+                        <a href="{{ path('app_home_repair_edit', {'id': roofing.id}) }}"
+                           class="text-warning-500 hover:underline font-semibold">Modifier</a>
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8" class="p-3 text-center text-red-400 font-semibold">Aucun enregistrement trouvé</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

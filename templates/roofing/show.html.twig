@@ -1,60 +1,59 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}ObjectHS{% endblock %}
+{% block title %}Roofing{% endblock %}
 
 {% block body %}
     <div class="flex flex-col gap-8">
-        <h1 class="text-4xl font-bold text-gray-800 mb-6">Demande de réparation : {{ object_h.name }}</h1>
+        <h1 class="text-4xl font-bold text-gray-800 mb-6">Projet de toiture</h1>
         <div class="flex max-xl:flex-col gap-8">
+            <!-- Informations générales -->
             <div class="bg-white shadow-md rounded-lg overflow-hidden">
                 <table class="table-auto w-full">
                     <tbody class="divide-y divide-gray-200">
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4 font-semibold text-gray-700">ID</td>
-                        <td class="px-6 py-4 text-gray-600">{{ object_h.id }}</td>
+                        <td class="px-6 py-4 text-gray-600">{{ roofing.id }}</td>
                     </tr>
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4 font-semibold text-gray-700">Date de création</td>
-                        <td class="px-6 py-4 text-gray-600">{{ object_h.creationDate ? object_h.creationDate|date('Y-m-d H:i:s') : '' }}</td>
+                        <td class="px-6 py-4 text-gray-600">{{ roofing.creationDate ? roofing.creationDate|date('Y-m-d H:i:s') : '' }}</td>
                     </tr>
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4 font-semibold text-gray-700">Date de modification</td>
-                        <td class="px-6 py-4 text-gray-600">{{ object_h.ModificationDate ? object_h.ModificationDate|date('Y-m-d H:i:s') : '' }}</td>
+                        <td class="px-6 py-4 text-gray-600">{{ roofing.modificationDate ? roofing.modificationDate|date('Y-m-d H:i:s') : '' }}</td>
                     </tr>
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4 font-semibold text-gray-700">Statut</td>
-                        <td class="px-6 py-4 text-primary-700 font-semibold">{{ object_h.status.value }}</td>
+                        <td class="px-6 py-4 text-primary-700 font-semibold">{{ roofing.status.value }}</td>
                     </tr>
                     <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4 font-semibold text-gray-700">Nom</td>
-                        <td class="px-6 py-4 text-gray-600">{{ object_h.name }}</td>
+                        <td class="px-6 py-4 font-semibold text-gray-700">Matériau</td>
+                        <td class="px-6 py-4 text-primary-700 font-semibold">{{ roofing.roofMaterial.value }}</td>
                     </tr>
                     <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4 font-semibold text-gray-700">État</td>
-                        <td class="px-6 py-4 text-primary-700 font-semibold">{{ object_h.state.value }}</td>
+                        <td class="px-6 py-4 font-semibold text-gray-700">Isolation</td>
+                        <td class="px-6 py-4 text-gray-600">{{ roofing.needInsulation ? 'Oui' : 'Non' }}</td>
                     </tr>
                     <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4 font-semibold text-gray-700">Âge</td>
-                        <td class="px-6 py-4 text-gray-600">{{ object_h.age }}</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4 font-semibold text-gray-700">Détails</td>
-                        <td class="px-6 py-4 text-gray-600">{{ object_h.Details }}</td>
+                        <td class="px-6 py-4 font-semibold text-gray-700">Description</td>
+                        <td class="px-6 py-4 text-gray-600">{{ roofing.description }}</td>
                     </tr>
                     </tbody>
                 </table>
                 <div class="flex justify-around gap-4 my-4">
-                    <a href="{{ path('app_object_hs_index') }}"
+                    <a href="{{ path('app_home_repair_index') }}"
                        class="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600">
                         Retour à la liste
                     </a>
 
-                    <a href="{{ path('app_object_hs_edit', {'id': object_h.id}) }}"
+                    <a href="{{ path('app_home_repair_edit', {'id': roofing.id}) }}"
                        class="bg-warning-500 text-white px-4 py-2 rounded-lg hover:bg-warning-600">
                         Modifier
                     </a>
                 </div>
             </div>
+
+            <!-- Adresses -->
             <div class="overflow-auto lg:overflow-visible">
                 <table class="table-auto w-full text-sm border-separate border-spacing-y-3 border-spacing-x-0">
                     <thead class="bg-primary-700 text-white">
@@ -66,17 +65,17 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for date in object_h.getDates() %}
+                    {% for date in roofing.getDates() %}
                         <tr class="bg-white rounded-lg hover:bg-gray-50">
                             <td class="p-3">{{ date.date ? date.date|date('d/m/Y H:i') : 'Non défini' }}</td>
                             <td class="p-3">{{ date.address ? date.address.address : 'Non défini' }}</td>
-                            <td class="p-3">{{ date.address ? date.address.PostalCode : 'Non défini' }}</td>
+                            <td class="p-3">{{ date.address ? date.address.postalCode : 'Non défini' }}</td>
                             <td class="p-3 rounded-r-lg">{{ date.address ? date.address.city : 'Non défini' }}</td>
                         </tr>
                     {% else %}
                         <tr>
                             <td colspan="4" class="p-3 text-center text-error-500 font-semibold">
-                                Aucun rendez-vous trouvé.
+                                Aucune adresse trouvée.
                             </td>
                         </tr>
                     {% endfor %}
@@ -84,6 +83,7 @@
                 </table>
             </div>
 
+            <!-- Photos -->
             <div class="overflow-auto lg:overflow-visible">
                 <table class="table-auto w-full text-sm border-separate border-spacing-y-3 border-spacing-x-0">
                     <thead class="bg-primary-700 text-white">
@@ -95,7 +95,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for photo in object_h.getPhotos() %}
+                    {% for photo in roofing.getPhotos() %}
                         <tr class="bg-white rounded-lg hover:bg-gray-50">
                             <td class="p-3">
                                 {% if photo.photoPath %}
@@ -128,12 +128,10 @@
                     </tbody>
                 </table>
             </div>
+        </div>
 
+        <div class="flex w-full justify-center gap-4">
+            {{ include('roofing/_delete_form.html.twig') }}
         </div>
-        <div class="flex W-full justify-center gap-4">
-            {{ include('object_hs/_delete_form.html.twig') }}
-        </div>
-        
     </div>
-
 {% endblock %}

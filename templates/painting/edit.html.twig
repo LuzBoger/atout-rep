@@ -1,42 +1,40 @@
 {% extends 'base.html.twig' %}
 {% import 'components/stepper.html.twig' as stepComponent %}
 
-{% block title %}Modifier l'objet HS{% endblock %}
+{% block title %}Edit Painting{% endblock %}
 
 {% block body %}
     <div class="w-3/4 max-sm:w-96 container mx-auto mt-10 bg-white px-16 py-8 rounded-lg shadow-md flex flex-col gap-8">
         <h1 class="text-2xl font-semibold text-primary-700">
-            Modifier les informations de l'objet HS
+            Modifier les informations du projet de peinture
         </h1>
 
         <!-- Stepper -->
         <ol class="flex items-center w-full p-3 space-x-4 text-sm font-medium text-center text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm sm:text-base rtl:space-x-reverse max-lg:flex-col max-lg:items-start max-lg:gap-4">
-            {{ stepComponent.step(1, 'Objet', true, true) }}
+            {{ stepComponent.step(1, 'Peinture', true, true) }}
         </ol>
 
         <!-- Formulaire de modification -->
-        {{ form_start(formObjectHS) }}
+        {{ form_start(formPainting) }}
         <div class="grid grid-cols-2 gap-4 max-lg:flex max-lg:flex-col">
-            {{ form_row(formObjectHS.name) }}
-            {{ form_row(formObjectHS.state) }}
-            {{ form_row(formObjectHS.age) }}
+            {{ form_row(formPainting.surfaceArea) }}
+            {{ form_row(formPainting.paintType) }}
             <div class="col-span-2">
-                {{ form_row(formObjectHS.Details) }}
+                {{ form_row(formPainting.description) }}
             </div>
         </div>
         <button type="submit" class="mt-6 px-4 py-2 bg-primary-700 text-white rounded-lg hover:bg-primary-800">
             Mettre à jour
         </button>
-        {{ form_end(formObjectHS) }}
+        {{ form_end(formPainting) }}
 
         <!-- Lien pour retour à la liste et suppression -->
         <div class="flex justify-between mt-6">
-            <a href="{{ path('app_object_hs_index') }}"
+            <a href="{{ path('app_home_repair_index') }}"
                class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">
                 Retour à la liste
             </a>
-            {{ include('object_hs/_delete_form.html.twig') }}
+            {{ include('painting/_delete_form.html.twig') }}
         </div>
     </div>
 {% endblock %}
-

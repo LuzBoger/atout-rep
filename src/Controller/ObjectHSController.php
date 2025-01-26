@@ -161,20 +161,20 @@ class ObjectHSController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_object_hs_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, ObjectHS $objectH, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, ObjectHS $objectHS, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(ObjectHSType::class, $objectH);
-        $form->handleRequest($request);
+        $formObjectHS = $this->createForm(ObjectHSType::class, $objectHS);
+        $formObjectHS->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($formObjectHS->isSubmitted() && $formObjectHS->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_object_h_s_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_object_hs_show', ['id' => $objectHS->getId()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('object_hs/edit.html.twig', [
-            'object_h' => $objectH,
-            'form' => $form,
+            'object_h' => $objectHS,
+            'formObjectHS' => $formObjectHS,
         ]);
     }
 

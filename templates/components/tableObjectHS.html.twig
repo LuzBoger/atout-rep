@@ -2,20 +2,19 @@
     <table class="table-auto w-full text-sm border-separate border-spacing-y-3 border-spacing-x-0">
         <thead class="bg-primary-700 text-white">
         <tr>
-            <th class="p-3 rounded-l-lg">ID</th>
-            <th class="p-3 text-left">Date de création</th>
-            <th class="p-3 text-left">Date de modification</th>
-            <th class="p-3 text-left">Statut</th>
-            <th class="p-3 text-left">Nom</th>
-            <th class="p-3 text-left">État</th>
-            <th class="p-3 text-left">Âge</th>
-            <th class="p-3 text-left">Détails</th>
-            <th class="p-3 text-left rounded-r-lg">Actions</th>
-        </tr>
+            <th class="py-3 rounded-l-lg">ID</th>
+            <th class="py-3 text-left">Date de création</th>
+            <th class="py-3 text-left">Date de modification</th>
+            <th class="py-3 text-left">Statut</th>
+            <th class="py-3 text-left">Nom</th>
+            <th class="py-3 text-left">État</th>
+            <th class="py-3 text-left">Âge</th>
+            <th class="py-3 text-left">Détails</th>
+            <th class="py-3 text-left rounded-r-lg">Actions</th>
         </thead>
         <tbody>
         {% for object_h in object_hs %}
-            <tr class="bg-white hover:bg-gray-100 rounded-lg">
+            <tr class="bg-white  rounded-lg">
                 <td class="p-3 rounded-l-lg">{{ object_h.id }}</td>
                 <td class="p-3">{{ object_h.creationDate ? object_h.creationDate|date('Y-m-d H:i:s') : '' }}</td>
                 <td class="p-3">{{ object_h.ModificationDate ? object_h.ModificationDate|date('Y-m-d H:i:s') : '' }}</td>
