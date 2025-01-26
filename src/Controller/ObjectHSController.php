@@ -24,6 +24,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ObjectHSController extends AbstractController
 {
     #[Route(name: 'app_object_hs_index', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function index(ObjectHSRepository $objectHSRepository, Security $security): Response
     {
         $user = $security->getUser();
@@ -36,6 +37,7 @@ class ObjectHSController extends AbstractController
     }
 
     #[Route('/new', name: 'app_object_hs_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $step = (int) $request->get('step', 1);
@@ -141,6 +143,7 @@ class ObjectHSController extends AbstractController
 
 
     #[Route('/{id}', name: 'app_object_hs_show', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function show(ObjectHS $objectHS, Security $security): Response
     {
         // Vérifiez si l'utilisateur est connecté
@@ -161,6 +164,7 @@ class ObjectHSController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_object_hs_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function edit(Request $request, ObjectHS $objectHS, EntityManagerInterface $entityManager): Response
     {
         $formObjectHS = $this->createForm(ObjectHSType::class, $objectHS);
@@ -179,6 +183,7 @@ class ObjectHSController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_object_h_s_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
     public function delete(Request $request, ObjectHS $objectH, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$objectH->getId(), $request->getPayload()->getString('_token'))) {

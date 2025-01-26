@@ -9,8 +9,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+
 
 class RegistrationController extends AbstractController
 {
@@ -20,6 +20,11 @@ class RegistrationController extends AbstractController
         EntityManagerInterface $entityManager,
         CustomerRepository $customerRepository
     ): Response {
+        // Empêche les utilisateurs connectés d'accéder à cette route
+        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->redirectToRoute('app_home'); // Redirige vers une autre page
+        }
+
         $customer = new Customer();
 
         $form = $this->createForm(RegistrationCustomerType::class, $customer);

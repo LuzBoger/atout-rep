@@ -15,11 +15,14 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/request-repair-house')]
+#[IsGranted('IS_AUTHENTICATED_FULLY')]
 final class HomeRepairController extends AbstractController
 {
     #[Route(name: 'app_home_repair_index', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function index(HomeRepairRepository $homeRepairRepository, Security $security): Response
     {
         $user = $security->getUser();
@@ -38,7 +41,9 @@ final class HomeRepairController extends AbstractController
         ]);
     }
 
+
     #[Route('/{id}', name: 'app_home_repair_show', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function show(HomeRepair $homeRepair): Response
     {
         // Vérifie le type de l'entité et redirige vers la route correspondante
@@ -53,6 +58,7 @@ final class HomeRepairController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_home_repair_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function edit(Request $request, HomeRepair $homeRepair, EntityManagerInterface $entityManager): Response
     {
         if ($homeRepair instanceof Roofing) {
@@ -90,6 +96,7 @@ final class HomeRepairController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_home_repair_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
     public function delete(Request $request, HomeRepair $homeRepair, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$homeRepair->getId(), $request->getPayload()->getString('_token'))) {

@@ -23,6 +23,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class RoofingController extends AbstractController
 {
     #[Route('/new', name: 'app_roofing_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $step = (int) $request->get('step', 1);
@@ -119,6 +120,7 @@ final class RoofingController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_roofing_show', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function show(Roofing $roofing, Security $security): Response
     {
         $user = $security->getUser();
@@ -133,6 +135,7 @@ final class RoofingController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_roofing_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
     public function delete(Request $request, Roofing $roofing, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete' . $roofing->getId(), $request->get('_token'))) {

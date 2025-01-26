@@ -21,7 +21,7 @@ class HomeController extends AbstractController
         ]);
     }
     #[Route('/dashboard', name: 'app_dashboard_content')]
-    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    #[IsGranted('ROLE_USER')]
     public function app_dashboard_content(Security $security, ObjectHSRepository $objectHSRepository, HomeRepairRepository $homeRepairRepository): Response
     {
         $user = $security->getUser();

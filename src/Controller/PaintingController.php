@@ -14,12 +14,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/painting')]
 final class PaintingController extends AbstractController
 {
 
     #[Route('/new', name: 'app_painting_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $step = (int) $request->get('step', 1);
@@ -117,6 +119,7 @@ final class PaintingController extends AbstractController
 
 
     #[Route('/{id}', name: 'app_painting_show', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function show(Painting $painting): Response
     {
         return $this->render('painting/show.html.twig', [
@@ -125,6 +128,7 @@ final class PaintingController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_painting_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
     public function delete(Request $request, Painting $painting, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$painting->getId(), $request->getPayload()->getString('_token'))) {

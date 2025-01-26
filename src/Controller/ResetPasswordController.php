@@ -22,6 +22,10 @@ class ResetPasswordController extends AbstractController
         AuthMailer $authMailer,
         EntityManagerInterface $entityManager,
     ): Response {
+        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->redirectToRoute('app_home'); // Redirige vers une autre page
+        }
+
         $email = $request->get('email');
 
         if ($email) {
@@ -53,6 +57,10 @@ class ResetPasswordController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
     ): Response {
+        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->redirectToRoute('app_home'); // Redirige vers une autre page
+        }
+
         $user = $userRepository->findOneBy(['resetPasswordToken' => $uid]);
 
         if (!$user || ($user->getResetPasswordToken() && $user->getResetTokenExpireAt() < new \DateTimeImmutable())) {
