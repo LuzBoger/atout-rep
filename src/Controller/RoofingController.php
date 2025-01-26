@@ -30,7 +30,7 @@ final class RoofingController extends AbstractController
 
         $formRoofing = $this->createForm(RoofingType::class, new Roofing());
         $formDates = $this->createForm(DatesType::class, new Dates(), [
-            'user' => $this->getUser(),
+            'customer' => $this->getUser(),
         ]);
         $formPhotos = $this->createForm(PhotosCollectionType::class, ['photos' => []]);
 

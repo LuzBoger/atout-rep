@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Form\PasswordResetType;
-use App\Repository\UserRepository;
+use App\Repository\AccountRepository;
 use App\Service\AuthMailer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,9 +17,9 @@ class ResetPasswordController extends AbstractController
 {
     #[Route('/forgot', name: 'app_forgot_password')]
     public function forgot(
-        Request $request,
-        UserRepository $userRepository,
-        AuthMailer $authMailer,
+        Request                $request,
+        AccountRepository      $userRepository,
+        AuthMailer             $authMailer,
         EntityManagerInterface $entityManager,
     ): Response {
         if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -37,7 +37,7 @@ class ResetPasswordController extends AbstractController
                 $resetPasswordToken = Uuid::v4()->toRfc4122();
                 $user->setResetPasswordToken($resetPasswordToken);
 
-                // Ajout d'une expiration (optionnel, dans l'entité User)
+                // Ajout d'une expiration (optionnel, dans l'entité Account)
                 $user->setResetTokenExpireAt(new \DateTimeImmutable('+1 hour'));
 
                 $entityManager->flush();
@@ -52,9 +52,9 @@ class ResetPasswordController extends AbstractController
 
     #[Route(path: '/reset/{uid}', name: 'app_reset_password')]
     public function reset(
-        string $uid,
-        UserRepository $userRepository,
-        Request $request,
+        string                 $uid,
+        AccountRepository      $userRepository,
+        Request                $request,
         EntityManagerInterface $entityManager,
     ): Response {
         if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -88,7 +88,7 @@ class ResetPasswordController extends AbstractController
         }
 
         return $this->render(view: 'reset_password/reset.html.twig', parameters: [
-            'user' => $user,
+            'customer' => $user,
             'form' => $form->createView(),
         ]);
     }

@@ -2,7 +2,7 @@
 
 namespace App\EventSubscriber;
 
-use App\Entity\User;
+use App\Entity\Account;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\Events;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,8 +13,8 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 
-#[AsEntityListener(event: Events::prePersist, method: 'hashPassword', entity: User::class)]
-#[AsEntityListener(event: Events::preUpdate, method: 'hashPassword', entity: User::class)]
+#[AsEntityListener(event: Events::prePersist, method: 'hashPassword', entity: Account::class)]
+#[AsEntityListener(event: Events::preUpdate, method: 'hashPassword', entity: Account::class)]
 class UserPasswordSubscriber
 {
     public function __construct(
@@ -23,8 +23,9 @@ class UserPasswordSubscriber
     {
     }
 
-    public function hashPassword(User $user): void
+    public function hashPassword(Account $user): void
     {
+        dump($user);
         $plainPassword = $user->getPlainPassword();
         if ($plainPassword) {
             $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);

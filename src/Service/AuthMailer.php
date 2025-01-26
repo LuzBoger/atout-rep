@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-use App\Entity\User;
+use App\Entity\Account;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -18,7 +18,7 @@ class AuthMailer
         $this->router = $router;
     }
 
-    public function sendForgotEmail(User $user): void
+    public function sendForgotEmail(Account $user): void
     {
         $resetLink = $this->router->generate('app_reset_password', ['uid' => $user->getResetPasswordToken()], UrlGeneratorInterface::ABSOLUTE_URL);
 

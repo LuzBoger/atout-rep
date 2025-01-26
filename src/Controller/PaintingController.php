@@ -28,7 +28,7 @@ final class PaintingController extends AbstractController
 
         $formPainting = $this->createForm(PaintingType::class, new Painting());
         $formDates = $this->createForm(DatesType::class, new Dates(), [
-            'user' => $this->getUser(),
+            'customer' => $this->getUser(),
         ]);
         $formPhotos = $this->createForm(PhotosCollectionType::class, ['photos' => []]);
 

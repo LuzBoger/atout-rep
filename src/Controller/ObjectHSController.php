@@ -44,7 +44,7 @@ class ObjectHSController extends AbstractController
 
         $formObjectHS = $this->createForm(ObjectHSType::class, new ObjectHS());
         $formDates = $this->createForm(DatesType::class, new Dates(), [
-            'user' => $this->getUser(),
+            'customer' => $this->getUser(),
         ]);
         $formPhotos = $this->createForm(PhotosCollectionType::class, ['photos' => []]);
 

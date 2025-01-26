@@ -4,13 +4,14 @@ namespace App\Form;
 
 use App\Entity\Customer;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class RegistrationCustomerType extends AbstractType
+class EditCustomerType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -41,10 +42,19 @@ class RegistrationCustomerType extends AbstractType
                 ],
             ])
             ->add('plainPassword', PasswordType::class, [
-                'label' => 'Mot de passe',
+                'required' => false,
+                'label' => 'Nouveau mot de passe (optionnel)',
+                'empty_data' => '',
                 'attr' => [
                     'class' => $inputCssClass,
+                    'placeholder' => 'Changer le mot de passe',
                 ],
+            ])->add('addresses', CollectionType::class, [
+                'entry_type' => AddressType::class, // Formulaire pour chaque adresse
+                'entry_options' => ['label' => false],
+                'allow_add' => true, // Permet d’ajouter dynamiquement des adresses
+                'allow_delete' => true, // Permet de supprimer dynamiquement des adresses
+                'by_reference' => false, // Nécessaire pour les collections OneToMany
             ]);
     }
 

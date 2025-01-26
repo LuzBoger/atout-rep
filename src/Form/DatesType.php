@@ -16,7 +16,7 @@ class DatesType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $user = $options['user'];
+        $user = $options['customer'];
         $inputCssClass = 'mt-1 block w-full border p-2 border-gray-300 rounded-md shadow-sm focus:ring-secondary-500 focus:border-secondary-500';
         $builder
             ->add('date', DateType::class, [
@@ -45,7 +45,7 @@ class DatesType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Dates::class,
-            'user' => null,
+            'customer' => null,
         ]);
     }
 }

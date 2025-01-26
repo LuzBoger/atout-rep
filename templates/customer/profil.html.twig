@@ -1,0 +1,159 @@
+{% extends 'base.html.twig' %}
+{% import 'components/stepper.html.twig' as stepComponent %}
+
+
+{% block title %}Modification du profil{% endblock %}
+
+{% block body %}
+    <!-- Conteneur principal pour les blocs -->
+    {{ form_start(formCustomer) }} <!-- Déplacez form_start ici -->
+    <div class="flex flex-col justify-center items-center mt-10">
+        <div class="flex flex-row max-lg:flex-col justify-center items-start max-lg:items-center gap-10 w-full">
+            <!-- Bloc de modification du profil -->
+            <div class="min-w-72 w-1/3 bg-white p-6 rounded-lg shadow-md">
+                <h1 class="text-2xl font-semibold text-primary-700 mb-4">Modifier le profil</h1>
+
+                <div class="flex flex-col gap-4">
+                    {{ form_row(formCustomer.name) }}
+                    {{ form_row(formCustomer.surname) }}
+                    {{ form_row(formCustomer.email) }}
+                    {{ form_row(formCustomer.phone) }}
+                    {{ form_row(formCustomer.plainPassword) }}
+                </div>
+            </div>
+
+            <!-- Bloc de modification des adresses -->
+            <div class="min-w-72 w-1/3 bg-white p-6 rounded-lg shadow-md">
+                <h1 class="text-2xl font-semibold text-primary-700 mb-4">Gérer les adresses</h1>
+
+                <div data-prototype="{{ form_widget(formCustomer.addresses.vars.prototype)|e }}" id="addresses-container" class="flex flex-col gap-4">
+                    {% for address in formCustomer.addresses %}
+                        <div class="address-card p-4 bg-gray-100 rounded-lg shadow-sm border border-gray-300">
+                            <div class="flex justify-between items-center">
+                                <h2 class="text-lg font-semibold text-primary-700">Adresse {{ loop.index }}</h2>
+                                <div class="flex gap-2">
+                                    <!-- Bouton Déplier/Plier -->
+                                    <button type="button" class="toggle-btn text-primary-700 hover:text-primary-800 font-bold">
+                                        Déplier
+                                    </button>
+                                    <!-- Bouton Supprimer -->
+                                    <button type="button" class="remove-address-btn text-red-500 hover:text-red-700 font-bold">
+                                        Supprimer
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Conteneur pliable -->
+                            <div class="address-fields flex flex-col gap-2 mt-2 max-h-0 opacity-0 transition-all overflow-hidden">
+                                {{ form_row(address.address, { 'label': 'Adresse' }) }}
+                                {{ form_row(address.postalCode, { 'label': 'Code postal' }) }}
+                                {{ form_row(address.city, { 'label': 'Ville' }) }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Bouton pour ajouter une nouvelle adresse -->
+                <button type="button" id="add-address-btn" class="mt-4 px-4 py-2 bg-primary-700 text-white rounded-lg hover:bg-primary-700">
+                    Ajouter une adresse
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Bouton de soumission -->
+        <div class="mt-8 w-full flex justify-center">
+            {{ form_start(formCustomer) }}
+            <button type="submit" class="px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700">
+                Mettre à jour
+            </button>
+        </div>
+    </div>
+    {{ form_end(formCustomer) }}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const addressesContainer = document.querySelector('#addresses-container');
+            const addAddressButton = document.querySelector('#add-address-btn');
+
+            // Récupération du prototype Symfony
+            let index = addressesContainer.children.length; // Compte initial des adresses
+            const prototype = addressesContainer.dataset.prototype;
+
+            // Fonction pour ajouter les gestionnaires "Déplier/Plier"
+            const initializeToggleButtons = () => {
+                const toggleButtons = addressesContainer.querySelectorAll('.toggle-btn');
+                toggleButtons.forEach((button) => {
+                    button.removeEventListener('click', toggleHandler); // Supprimer l'ancien gestionnaire
+                    button.addEventListener('click', toggleHandler);
+                });
+            };
+
+            // Fonction pour gérer le pliage/dépliage
+            const toggleHandler = (event) => {
+                const button = event.target;
+                const addressFields = button.closest('.address-card').querySelector('.address-fields');
+                const isHidden = addressFields.classList.contains('max-h-0');
+
+                // Toggle classes for show/hide
+                addressFields.classList.toggle('max-h-0', !isHidden);
+                addressFields.classList.toggle('opacity-0', !isHidden);
+                addressFields.classList.toggle('max-h-full', isHidden);
+                addressFields.classList.toggle('opacity-100', isHidden);
+
+                // Change button text
+                button.textContent = isHidden ? 'Plier' : 'Déplier';
+            };
+
+            // Ajouter une nouvelle adresse
+            addAddressButton.addEventListener('click', () => {
+                // Remplace "__name__" dans le prototype par l'index actuel
+                const newForm = prototype.replace(/__name__/g, index);
+                index++;
+
+                // Crée un conteneur pour la nouvelle adresse
+                const addressCard = document.createElement('div');
+                addressCard.className = 'address-card p-4 bg-gray-100 rounded-lg shadow-sm border border-gray-300';
+                addressCard.innerHTML = `
+            <div class="flex justify-between items-center">
+                <h2 class="text-lg font-semibold text-primary-700">Nouvelle adresse</h2>
+                <button type="button" class="toggle-btn text-primary-700 hover:text-primary-800 font-bold">
+                    Déplier
+                </button>
+                <button type="button" class="remove-address-btn text-red-500 hover:text-red-700 font-bold">
+                    Supprimer
+                </button>
+            </div>
+            <div class="address-fields flex flex-col gap-2 mt-2 max-h-0 opacity-0 transition-all overflow-hidden">
+                ${newForm}
+            </div>
+        `;
+
+                // Ajoute la carte au conteneur
+                addressesContainer.appendChild(addressCard);
+
+                // Ajouter les gestionnaires d'événements pour les nouveaux boutons
+                initializeToggleButtons();
+                initializeRemoveButtons(addressCard.querySelector('.remove-address-btn'));
+            });
+
+            // Supprimer une adresse
+            const initializeRemoveButtons = (button) => {
+                button.addEventListener('click', (e) => {
+                    const addressCard = e.target.closest('.address-card');
+                    addressCard.remove();
+                });
+            };
+
+            // Initialisation des boutons existants
+            document.querySelectorAll('.remove-address-btn').forEach((button) => {
+                initializeRemoveButtons(button);
+            });
+
+            // Initialiser les boutons "Déplier/Plier"
+            initializeToggleButtons();
+        });
+
+
+    </script>
+
+{% endblock %}
+

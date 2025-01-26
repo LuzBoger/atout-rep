@@ -7,7 +7,7 @@ security:
         users_in_memory: { memory: null }
         users_in_database:
             entity:
-                class: App\Entity\User
+                class: App\Entity\Account
                 property: email
     firewalls:
         dev:

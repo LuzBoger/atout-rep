@@ -2,17 +2,17 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
+use App\Repository\AccountRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-#[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '`user`')]
+#[ORM\Entity(repositoryClass: AccountRepository::class)]
 #[ORM\InheritanceType("JOINED")]
+#[ORM\Table(name: 'accounts')]
 #[ORM\DiscriminatorColumn("role_type", "string")]
 #[ORM\DiscriminatorMap(["client" => Customer::class, "prestataire" => Provider::class, "administrateur" => Admin::class])]
-abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
+abstract class Account implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -23,7 +23,7 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $Surname = null;
+    private ?string $surname = null;
 
     #[ORM\Column(length: 255)]
     private ?string $email = null;
@@ -45,6 +45,9 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $resetTokenExpireAt = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -64,12 +67,12 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getSurname(): ?string
     {
-        return $this->Surname;
+        return $this->surname;
     }
 
-    public function setSurname(string $Surname): static
+    public function setSurname(string $surname): static
     {
-        $this->Surname = $Surname;
+        $this->surname = $surname;
 
         return $this;
     }
@@ -135,6 +138,11 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPlainPassword(string $plainPassword): void
     {
         $this->plainPassword = $plainPassword;
+
+        if ($plainPassword) {
+            $this->updatedAt = new \DateTimeImmutable(); // Marque comme modifié
+        }
+
     }
 
     public function getPlainPassword(): string
@@ -162,6 +170,18 @@ abstract class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setResetTokenExpireAt(?\DateTimeImmutable $resetTokenExpireAt): static
     {
         $this->resetTokenExpireAt = $resetTokenExpireAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

@@ -51,7 +51,7 @@
                         <a href="#" class="hover:text-secondary-800">MarketPlace</a>
                     </li>
                     <li class="{% if '/profil' in app.request.uri %}border-b-2 border-primary-700 {% endif %}">
-                        <a href="#" class="hover:text-secondary-800">Profil</a>
+                        <a href="{{ path('app_profil', { id: app.user.id }) }}" class="hover:text-secondary-800">Profil</a>
                     </li>
                 {% endif %}
 
