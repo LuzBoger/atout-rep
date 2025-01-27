@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Product index{% endblock %}
+
+{% block body %}
+    <div class="flex justify-center items-center my-4 max-lg:flex-col flex-wrap">
+        {% for product in products %}
+            <div class="min-w-32rem w-32rem h-64 bg-white rounded-lg flex m-4 border border-secondary-300">
+                {% if product.photos|length > 0 %}
+                    <img class="object-cover w-44 rounded-l-lg" src="{{ asset(product.photos[0].photoPath) }}" alt="{{ product.name }}">
+                {% else %}
+                    <img class="object-cover w-44 rounded-l-lg" src="{{ asset('default-image.jpg') }}" alt="default image">
+                {% endif %}
+                <div class="w-full h-full flex flex-col justify-between">
+                    <div class="flex flex-col justify-between h-full">
+                        <div>
+                            <p class="font-bold text-2xl m-4">{{ product.name }}</p>
+                            <p class="text-sm mx-4">
+                                {% set maxLength = 100 %}
+                                {{ product.description | length > maxLength ? product.description | slice(0, maxLength) ~ '...' : product.description }}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-md font-semibold mx-4">Prix : {{ product.price | number_format(2, ',', ' ') }} €</p>
+                            <p class="text-md font-semibold mx-4">Stock : {{ product.stock }}</p>
+                        </div>
+
+                    </div>
+                    <div>
+                        <form method="post" class="flex justify-end mr-4 mb-4">
+                            <a href="{{ path('app_product_show', {'id': product.id}) }}"
+                               class="bg-primary-700 hover:bg-primary-800 rounded-lg py-2 px-4 text-white">Visualiser</a>
+                            {% if product.stock > 0 %}
+                            {#<a href="{{ path('cart_add', {'id': product.id}) }}"
+                                class="bg-success-700 hover:bg-success-800 rounded-md py-2 px-5 text-white">Ajouter</a>#}
+                            {% else %}
+                                <span class="text-gray-500 py-2 px-5">Indisponible</span>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    {# Navigation de pagination #}
+    <div class="flex justify-center my-4">
+        <ul class="flex">
+            {% if currentPage > 1 %}
+                <li>
+                    <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': currentPage - 1})) }}"
+                       class="bg-primary-700 hover:bg-primary-800 py-2 px-4 text-white rounded-lg mx-1">
+                        Précédent
+                    </a>
+                </li>
+            {% endif %}
+
+            {% for i in 1..totalPages %}
+                <li>
+                    <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': i})) }}"
+                       class="py-2 px-4 mx-1 {{ i == currentPage ? 'bg-primary-700 text-white' : 'bg-gray-200 hover:bg-gray-300' }} rounded-lg">
+                        {{ i }}
+                    </a>
+                </li>
+            {% endfor %}
+
+            {% if currentPage < totalPages %}
+                <li>
+                    <a href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({'page': currentPage + 1})) }}"
+                       class="bg-primary-700 hover:bg-primary-800 py-2 px-4 text-white rounded-lg mx-1">
+                        Suivant
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+{% endblock %}
+

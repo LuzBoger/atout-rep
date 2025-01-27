@@ -1,0 +1,105 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Product{% endblock %}
+
+{% block body %}
+    <div class="my-8 text-4xl font-semibold flex justify-center">
+        Fiche produit
+    </div>
+    <div class="flex justify-center">
+        <div class="bg-white rounded-lg w-[48rem] h-80 border border-gray-300 flex">
+            <div class="relative w-60 h-full flex-shrink-0">
+                <div id="photoCarousel" class="w-full h-full overflow-hidden relative">
+                    {% for photo in product.photos %}
+                        <img class="object-cover w-full h-full rounded-l-lg absolute transition-opacity duration-300 ease-in-out"
+                             src="{{ asset(photo.photoPath) }}"
+                             alt="{{ product.name }}"
+                             style="opacity: {{ loop.first ? '1' : '0' }};">
+                    {% else %}
+                        <img class="object-cover w-full h-full rounded-l-lg absolute"
+                             src="{{ asset('default-image.jpg') }}"
+                             alt="default image">
+                    {% endfor %}
+                </div>
+                <button id="prevPhoto" class="absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-800 p-2 rounded-full">
+                    <img src="{{ asset('assets/svg/arrow_left.svg') }}" alt="Précédent" class="w-5 h-5">
+                </button>
+                <button id="nextPhoto" class="absolute top-1/2 right-2 transform -translate-y-1/2 bg-gray-800 p-2 rounded-full">
+                    <img src="{{ asset('assets/svg/arrow_right.svg') }}" alt="Suivant" class="w-5 h-5">
+                </button>
+            </div>
+            <div class="flex flex-col ml-4 mt-4 w-full">
+                <p class="font-bold text-2xl">{{ product.name }}</p>
+                <p class="mt-4">{{ product.description }}</p>
+                <div class="flex h-full">
+                    <div class="flex flex-col-reverse mb-4 w-full">
+                        <div class="mt-2">
+                            <span class="font-semibold">Stock : </span>
+                            <span>{{ product.stock }} restant</span>
+                        </div>
+                        <div class="mt-2">
+                            <span class="font-semibold">Dimensions : </span>
+                            <span>{{ product.length }}x{{ product.width }}x{{ product.height }} cm</span>
+                        </div>
+                        <div>
+                            <span class="font-semibold">Poids : </span>
+                            <span>{{ product.weight }} g</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col-reverse mb-4 w-full">
+                        <form method="post" action="{{ path('app_cart_add', {'id': product.id}) }}" id="cartForm">
+                            <div class="flex justify-end mr-4 items-center">
+                                <select id="quantity" name="quantity" onchange="updateQuantityValue(this)"
+                                        class="mr-4 pl-1 h-9 w-20 bg-gray-100 border-2 border-blue-main rounded-md">
+                                    {% for i in 1..12 %}
+                                        {% if product.stock >= i %}
+                                            <option value="{{ i }}">{{ i }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="bg-success-700 hover:bg-success-800 rounded-lg py-2 px-4 text-white">
+                                    Ajouter
+                                </button>
+                            </div>
+                        </form>
+                        <p class="flex flex-row-reverse mr-4 text-2xl font-bold mb-4">€<span id="priceDisplay">{{ product.price }}</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const productPrice = {{ product.price }};
+        let priceElement = document.getElementById("priceDisplay");
+
+        function updateQuantityValue(selectElement) {
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const quantity = document.getElementById('quantity').value = selectedOption.value;
+            priceElement.innerText = (productPrice * quantity).toFixed(2);
+        }
+
+        // Carrousel logic
+        const photos = document.querySelectorAll("#photoCarousel img");
+        const prevPhotoButton = document.getElementById("prevPhoto");
+        const nextPhotoButton = document.getElementById("nextPhoto");
+        let currentPhotoIndex = 0;
+
+        function updateCarousel() {
+            photos.forEach((photo, index) => {
+                photo.style.opacity = index === currentPhotoIndex ? "1" : "0";
+            });
+        }
+
+        prevPhotoButton.addEventListener("click", () => {
+            currentPhotoIndex = (currentPhotoIndex - 1 + photos.length) % photos.length;
+            updateCarousel();
+        });
+
+        nextPhotoButton.addEventListener("click", () => {
+            currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
+            updateCarousel();
+        });
+
+        updateCarousel(); // Initialize carousel
+    </script>
+{% endblock %}

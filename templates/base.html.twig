@@ -48,7 +48,7 @@
                         <a href="{{ path('app_home_repair_index') }}" class="hover:text-secondary-800">Réparation maison</a>
                     </li>
                     <li class="{% if '/marketplace' in app.request.uri %}border-b-2 border-primary-700 {% endif %}">
-                        <a href="#" class="hover:text-secondary-800">MarketPlace</a>
+                        <a href="{{ path('app_product_index') }}" class="hover:text-secondary-800">MarketPlace</a>
                     </li>
                     <li class="{% if '/profil' in app.request.uri %}border-b-2 border-primary-700 {% endif %}">
                         <a href="{{ path('app_profil', { id: app.user.id }) }}" class="hover:text-secondary-800">Profil</a>

@@ -9,6 +9,7 @@ use App\Entity\Dates;
 use App\Entity\ObjectHS;
 use App\Entity\Painting;
 use App\Entity\Photo;
+use App\Entity\Product;
 use App\Entity\Provider;
 use App\Entity\Roofing;
 use App\Enum\PaintType;
@@ -38,7 +39,8 @@ class AppFixtures extends Fixture
             $manager->persist($admin);
         }
 
-        // Create 10 Providers
+        // Create Providers
+        $providers = [];
         for ($i = 0; $i < 10; $i++) {
             $provider = new Provider();
             $provider->setName($faker->firstName());
@@ -49,7 +51,36 @@ class AppFixtures extends Fixture
             $provider->setRoles(['ROLE_PRESTA']);
             $provider->setPriceFDP($faker->randomFloat(2, 10, 100));
             $manager->persist($provider);
+            $providers[] = $provider;
         }
+
+        // Create Products
+        foreach ($providers as $provider) {
+            for ($k = 0; $k < rand(5, 15); $k++) {
+                $product = new Product();
+                $product->setName($faker->words(3, true));
+                $product->setWeight($faker->randomFloat(1, 0.1, 10));
+                $product->setDescription($faker->text(200));
+                $product->setLength($faker->randomFloat(2, 10, 100));
+                $product->setWidth($faker->randomFloat(2, 10, 100));
+                $product->setHeight($faker->randomFloat(2, 10, 100));
+                $product->setStock($faker->numberBetween(0, 100));
+                $product->setPrice($faker->randomFloat(2, 5, 500));
+                $product->setDeleted(false);
+                $product->setProvider($provider);
+                $manager->persist($product);
+
+                // Add Photos for Products
+                for ($m = 0; $m < rand(1, 3); $m++) {
+                    $photo = new Photo();
+                    $photo->setName($faker->word());
+                    $photo->setPhotoPath("https://picsum.photos/1920/1080?random=" . rand(1, 10000));
+                    $photo->setUploadDate($faker->dateTimeThisYear());
+                    $photo->setProduct($product); // Association avec le produit
+                    $manager->persist($photo);
+                }
+            }
+            }
 
         // Create Customers
         $customers = [];
@@ -79,7 +110,7 @@ class AppFixtures extends Fixture
             }
         }
 
-        // Create Requests
+// Create Requests
         foreach ($customers as $customer) {
             for ($k = 0; $k < rand(1, 3); $k++) {
                 $baseRequestType = rand(0, 2); // 0 = ObjectHS, 1 = Roofing, 2 = Painting
@@ -101,11 +132,11 @@ class AppFixtures extends Fixture
                     $objectHS->setDetails($faker->text(200));
                     $manager->persist($objectHS);
 
-                    // Create Photo for ObjectHS
+                    // Create Photos for ObjectHS
                     for ($m = 0; $m < rand(1, 3); $m++) {
                         $photo = new Photo();
                         $photo->setName($faker->word());
-                        $photo->setPhotoPath($faker->imageUrl());
+                        $photo->setPhotoPath("https://picsum.photos/1920/1080?random=" . rand(1, 10000));
                         $photo->setUploadDate($faker->dateTimeThisYear());
                         $photo->setObjectHS($objectHS);
                         $manager->persist($photo);
@@ -126,11 +157,11 @@ class AppFixtures extends Fixture
                     $roofing->setDescription($faker->text(300));
                     $manager->persist($roofing);
 
-                    // Create Photo for Roofing
+                    // Create Photos for Roofing
                     for ($m = 0; $m < rand(1, 3); $m++) {
                         $photo = new Photo();
                         $photo->setName($faker->word());
-                        $photo->setPhotoPath($faker->imageUrl());
+                        $photo->setPhotoPath("https://picsum.photos/1920/1080?random=" . rand(1, 10000));
                         $photo->setUploadDate($faker->dateTimeThisYear());
                         $photo->setHomeRepair($roofing);
                         $manager->persist($photo);
@@ -151,27 +182,19 @@ class AppFixtures extends Fixture
                     $painting->setDescription($faker->text(300));
                     $manager->persist($painting);
 
-                    // Create Photo for Painting
+                    // Create Photos for Painting
                     for ($m = 0; $m < rand(1, 3); $m++) {
                         $photo = new Photo();
                         $photo->setName($faker->word());
-                        $photo->setPhotoPath($faker->imageUrl());
+                        $photo->setPhotoPath("https://picsum.photos/1920/1080?random=" . rand(1, 10000));
                         $photo->setUploadDate($faker->dateTimeThisYear());
                         $photo->setHomeRepair($painting);
                         $manager->persist($photo);
                     }
                 }
-
-                // Create Dates for each Request
-                for ($l = 0; $l < rand(1, 2); $l++) {
-                    $date = new Dates();
-                    $date->setDate($faker->dateTimeThisMonth());
-                    $date->setRequest($objectHS ?? $roofing ?? $painting);
-                    $date->setAddress($faker->randomElement($addresses));
-                    $manager->persist($date);
-                }
             }
         }
+
 
         $manager->flush();
 

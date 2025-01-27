@@ -6,6 +6,54 @@ module.exports = {
   ],
   theme: {
     extend: {
+      width: {
+        '28rem': '28rem', // 448px
+        '32rem': '32rem', // 512px
+        '36rem': '36rem', // 576px
+        '40rem': '40rem', // 640px
+        '44rem': '44rem', // 704px
+        '48rem': '48rem', // 768px
+      },
+      maxWidth: {
+        '28rem': '28rem', // 448px
+        '32rem': '32rem', // 512px
+        '36rem': '36rem', // 576px
+        '40rem': '40rem', // 640px
+        '44rem': '44rem', // 704px
+        '48rem': '48rem', // 768px
+      },
+      minWidth: {
+        '28rem': '28rem', // 448px
+        '32rem': '32rem', // 512px
+        '36rem': '36rem', // 576px
+        '40rem': '40rem', // 640px
+        '44rem': '44rem', // 704px
+        '48rem': '48rem', // 768px
+      },
+      height: {
+        '28rem': '28rem', // 448px
+        '32rem': '32rem', // 512px
+        '36rem': '36rem', // 576px
+        '40rem': '40rem', // 640px
+        '44rem': '44rem', // 704px
+        '48rem': '48rem', // 768px
+      },
+      maxHeight: {
+        '28rem': '28rem', // 448px
+        '32rem': '32rem', // 512px
+        '36rem': '36rem', // 576px
+        '40rem': '40rem', // 640px
+        '44rem': '44rem', // 704px
+        '48rem': '48rem', // 768px
+      },
+      minHeight: {
+        '28rem': '28rem', // 448px
+        '32rem': '32rem', // 512px
+        '36rem': '36rem', // 576px
+        '40rem': '40rem', // 640px
+        '44rem': '44rem', // 704px
+        '48rem': '48rem', // 768px
+      },
       colors: {
         error: {
           100: "#FDECEC",
