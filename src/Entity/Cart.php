@@ -19,15 +19,20 @@ class Cart
     #[ORM\Column(enumType: StatusCart::class)]
     private ?StatusCart $statusCart = null;
 
-    /**
-     * @var Collection<int, CartProduct>
-     */
-    #[ORM\OneToMany(targetEntity: CartProduct::class, mappedBy: 'cart')]
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Customer $customer = null;
+
+    #[ORM\OneToMany(targetEntity: CartProduct::class, mappedBy: 'cart', cascade: ['persist', 'remove'])]
     private Collection $cartProducts;
 
     public function __construct()
     {
         $this->cartProducts = new ArrayCollection();
+    }
+
+    public function getCartProducts(): Collection
+    {
+        return $this->cartProducts;
     }
 
     public function getId(): ?int
@@ -50,29 +55,14 @@ class Cart
     /**
      * @return Collection<int, CartProduct>
      */
-    public function getCartProducts(): Collection
+    public function getCustomer(): ?Customer
     {
-        return $this->cartProducts;
+        return $this->customer;
     }
 
-    public function addCartProduct(CartProduct $cartProduct): static
+    public function setCustomer(?Customer $customer): static
     {
-        if (!$this->cartProducts->contains($cartProduct)) {
-            $this->cartProducts->add($cartProduct);
-            $cartProduct->setCart($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCartProduct(CartProduct $cartProduct): static
-    {
-        if ($this->cartProducts->removeElement($cartProduct)) {
-            // set the owning side to null (unless already changed)
-            if ($cartProduct->getCart() === $this) {
-                $cartProduct->setCart(null);
-            }
-        }
+        $this->customer = $customer;
 
         return $this;
     }

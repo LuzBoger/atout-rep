@@ -28,37 +28,53 @@
                     <a href="{{ path('app_home') }}" class="hover:text-secondary-800">Accueil</a>
                 </li>
                 {% if not app.user %}
-                    <li class="{% if '/presentation' in app.request.uri %}border-b-2 border-primary-700 {% endif %}">
+                    <!-- Utilisateur non connecté -->
+                    <li class="{% if '/presentation' in app.request.uri %}border-b-2 border-primary-700{% endif %}">
                         <a href="#" class="hover:text-secondary-800">Présentation</a>
                     </li>
-                    <li class="{% if '/objectif' in app.request.uri %}border-b-2 border-primary-700 {% endif %}">
+                    <li class="{% if '/objectif' in app.request.uri %}border-b-2 border-primary-700{% endif %}">
                         <a href="#" class="hover:text-secondary-800">Objectif</a>
                     </li>
-                    <li class="{% if '/cv' in app.request.uri %}border-b-2 border-primary-700 {% endif %}">
+                    <li class="{% if '/cv' in app.request.uri %}border-b-2 border-primary-700{% endif %}">
                         <a href="#" class="hover:text-secondary-800">Curriculum vitae</a>
                     </li>
+
                 {% else %}
-                    <li class="{% if '/dashboard' in app.request.uri %}border-b-2 border-primary-700 {% endif %}">
+                    <!-- Dashboard commun à tous les utilisateurs connectés -->
+                    <li class="{% if '/dashboard' in app.request.uri %}border-b-2 border-primary-700{% endif %}">
                         <a href="{{ path('app_dashboard_content') }}" class="hover:text-secondary-800">Dashboard</a>
                     </li>
-                    <li class="{% if '/request-object-hs' in app.request.uri %}border-b-2 border-primary-700 {% endif %}">
-                        <a href="{{ path('app_object_hs_index') }}" class="hover:text-secondary-800">Object-HS</a>
-                    </li>
-                    <li class="{% if '/request-repair-house' in app.request.uri %}border-b-2 border-primary-700 {% endif %}">
-                        <a href="{{ path('app_home_repair_index') }}" class="hover:text-secondary-800">Réparation maison</a>
-                    </li>
-                    <li class="{% if '/marketplace' in app.request.uri %}border-b-2 border-primary-700 {% endif %}">
-                        <a href="{{ path('app_product_index') }}" class="hover:text-secondary-800">MarketPlace</a>
-                    </li>
-                    <li class="{% if '/profil' in app.request.uri %}border-b-2 border-primary-700 {% endif %}">
+
+                    {% if 'ROLE_USER' in app.user.roles %}
+                        <!-- Liens spécifiques pour les utilisateurs avec ROLE_USER -->
+                        <li class="{% if '/request-object-hs' in app.request.uri %}border-b-2 border-primary-700{% endif %}">
+                            <a href="{{ path('app_object_hs_index') }}" class="hover:text-secondary-800">Object-HS</a>
+                        </li>
+                        <li class="{% if '/request-repair-house' in app.request.uri %}border-b-2 border-primary-700{% endif %}">
+                            <a href="{{ path('app_home_repair_index') }}" class="hover:text-secondary-800">Réparation maison</a>
+                        </li>
+                        <li class="{% if '/marketplace' in app.request.uri %}border-b-2 border-primary-700{% endif %}">
+                            <a href="{{ path('app_product_index') }}" class="hover:text-secondary-800">MarketPlace</a>
+                        </li>
+
+                    {% elseif 'ROLE_PRESTA' in app.user.roles %}
+                        <!-- Liens spécifiques pour les utilisateurs avec ROLE_PRESTA -->
+                        <li class="{% if '/presta-products' in app.request.uri %}border-b-2 border-primary-700{% endif %}">
+                            <a href="{{ path('app_product_index_presta') }}" class="hover:text-secondary-800">Mes Produits</a>
+                        </li>
+                    {% endif %}
+
+                    <!-- Profil (disponible pour tous les utilisateurs connectés) -->
+                    <li class="{% if '/profil' in app.request.uri %}border-b-2 border-primary-700{% endif %}">
                         <a href="{{ path('app_profil', { id: app.user.id }) }}" class="hover:text-secondary-800">Profil</a>
                     </li>
                 {% endif %}
 
 
+
                 {% if app.user is defined and app.user is not null %}
                     <li><a href="{{ path('app_logout') }}" class="hover:text-secondary-800">Déconnexion</a></li>
-                    <li class="{% if '/temp' in app.request.uri %}border-b-2 border-primary-700 {% endif %}"><a href="#" class="hover:text-secondary-800">Panier</a></li>
+                    <li class="{% if '/temp' in app.request.uri %}border-b-2 border-primary-700 {% endif %}"><a href="{{ path('app_cart_index') }}" class="hover:text-secondary-800">Panier</a></li>
                 {% else %}
                     <li class="{% if '/login' in app.request.uri %}border-b-2 border-primary-700 {% endif %}">
                         <a href="{{ path('app_login') }}" class="hover:text-secondary-800">Connexion</a>

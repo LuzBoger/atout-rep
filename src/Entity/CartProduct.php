@@ -19,19 +19,11 @@ class CartProduct
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $quantity = null;
 
-    /**
-     * @var Collection<int, Product>
-     */
-    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'cartProduct')]
-    private Collection $product;
-
     #[ORM\ManyToOne(inversedBy: 'cartProducts')]
     private ?Cart $cart = null;
 
-    public function __construct()
-    {
-        $this->product = new ArrayCollection();
-    }
+    #[ORM\ManyToOne(inversedBy: 'cartProducts')]
+    private ?Product $product = null;
 
     public function getId(): ?int
     {
@@ -50,36 +42,6 @@ class CartProduct
         return $this;
     }
 
-    /**
-     * @return Collection<int, Product>
-     */
-    public function getProduct(): Collection
-    {
-        return $this->product;
-    }
-
-    public function addProduct(Product $product): static
-    {
-        if (!$this->product->contains($product)) {
-            $this->product->add($product);
-            $product->setCartProduct($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduct(Product $product): static
-    {
-        if ($this->product->removeElement($product)) {
-            // set the owning side to null (unless already changed)
-            if ($product->getCartProduct() === $this) {
-                $product->setCartProduct(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getCart(): ?cart
     {
         return $this->cart;
@@ -88,6 +50,18 @@ class CartProduct
     public function setCart(?cart $cart): static
     {
         $this->cart = $cart;
+
+        return $this;
+    }
+
+    public function getProduct(): ?Product
+    {
+        return $this->product;
+    }
+
+    public function setProduct(?Product $product): static
+    {
+        $this->product = $product;
 
         return $this;
     }

@@ -30,26 +30,20 @@
                             <p class="text-md font-semibold mx-4">Prix : {{ product.price | number_format(2, ',', ' ') }} €</p>
                             <p class="text-md font-semibold mx-4">Stock : {{ product.stock }}</p>
                         </div>
-
                     </div>
-                    <div>
-                        <form method="post" class="flex justify-end mr-4 mb-4">
-                            <a href="{{ path('app_product_show', {'id': product.id}) }}"
-                               class="bg-primary-700 hover:bg-primary-800 rounded-lg py-2 px-4 text-white">Visualiser</a>
 
-                            {% if product.stock > 0 %}
-                                {#<a href="{{ path('cart_add', {'id': product.id}) }} class="bg-success-700 hover:bg-success-800 rounded-md py-2 px-5 text-white">Ajouter</a>#}
-                            {% else %}
-                                <span class="text-gray-500 py-2 px-5">Indisponible</span>
-                            {% endif %}
+                    <div class="flex justify-end mr-4 mb-4 gap-4">
+                        <a href="{{ path('app_product_show', {'id': product.id}) }}"
+                           class="bg-primary-700 hover:bg-primary-800 rounded-lg py-2 px-4 text-white">Visualiser</a>
 
-                            {# Afficher le bouton Modifier si l'utilisateur a le rôle ROLE_PRESTA #}
-                            {% if is_granted('ROLE_PRESTA') %}
-                                <a href="{{ path('app_product_edit', {'id': product.id}) }}"
-                                   class="bg-warning-700 hover:bg-warning-800 rounded-lg py-2 px-4 text-white ml-2">Modifier</a>
-                            {% endif %}
-                        </form>
+                        {% if product.stock <= 0 %}
+                            <span class="text-red-500">Rupture de stock</span>
+                        {% endif %}
 
+                        {% if is_granted('ROLE_PRESTA') %}
+                            <a href="{{ path('app_product_edit', {'id': product.id}) }}"
+                               class="bg-warning-700 hover:bg-warning-800 rounded-lg py-2 px-4 text-white ml-2">Modifier</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

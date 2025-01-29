@@ -20,24 +20,30 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/marketplace')]
 final class ProductController extends AbstractController
 {
-    #[Route(name: 'app_product_index', methods: ['GET'])]
+    #[Route('/products', name: 'app_product_index', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
-    public function index(ProductRepository $productRepository, Request $request): Response
+    public function index(ProductRepository $productRepository, Request $request, Security $security): Response
     {
         $page = $request->query->getInt('page', 1);
         $limit = 10;
 
-        // Appel à la méthode dans le repository
+        // Récupération des produits avec pagination
         $pagination = $productRepository->findPaginatedProducts($page, $limit);
+
+        // Récupérer l'utilisateur connecté
+        $user = $security->getUser();
+        $roles = $user ? $user->getRoles() : [];
 
         return $this->render('product/index.html.twig', [
             'products' => $pagination['items'],
             'currentPage' => $page,
             'totalPages' => $pagination['totalPages'],
+            'roles' => $roles, // 👈 Ajout des rôles dans le rendu
         ]);
     }
 
-    #[Route(name: 'app_product_index', methods: ['GET'])]
+
+    #[Route('/products/presta', name: 'app_product_index_presta', methods: ['GET'])]
     #[IsGranted('ROLE_PRESTA')]
     public function indexPresta(ProductRepository $productRepository, Request $request, Security $security): Response
     {
@@ -136,10 +142,14 @@ final class ProductController extends AbstractController
 
 
     #[Route('/{id}', name: 'app_product_show', methods: ['GET'])]
-    public function show(Product $product): Response
+    public function show(Product $product, Security $security): Response
     {
+        $user = $security->getUser();
+        $roles = $user ? $user->getRoles() : [];
+
         return $this->render('product/show.html.twig', [
             'product' => $product,
+            'roles' => $roles,
         ]);
     }
 
