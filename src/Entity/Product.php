@@ -29,10 +29,10 @@ class Product
     private ?string $length = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 6, scale: 2)]
-    private ?string $Width = null;
+    private ?string $width = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 6, scale: 2)]
-    private ?string $Height = null;
+    private ?string $height = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $stock = null;
@@ -52,6 +52,9 @@ class Product
      */
     #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'product')]
     private Collection $photos;
+
+    #[ORM\ManyToOne(inversedBy: 'product')]
+    private ?CartProduct $cartProduct = null;
 
     public function __construct()
     {
@@ -113,24 +116,24 @@ class Product
 
     public function getWidth(): ?string
     {
-        return $this->Width;
+        return $this->width;
     }
 
-    public function setWidth(string $Width): static
+    public function setWidth(string $width): static
     {
-        $this->Width = $Width;
+        $this->width = $width;
 
         return $this;
     }
 
     public function getHeight(): ?string
     {
-        return $this->Height;
+        return $this->height;
     }
 
-    public function setHeight(string $Height): static
+    public function setHeight(string $height): static
     {
-        $this->Height = $Height;
+        $this->height = $height;
 
         return $this;
     }
@@ -209,6 +212,18 @@ class Product
                 $photo->setProduct(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCartProduct(): ?CartProduct
+    {
+        return $this->cartProduct;
+    }
+
+    public function setCartProduct(?CartProduct $cartProduct): static
+    {
+        $this->cartProduct = $cartProduct;
 
         return $this;
     }

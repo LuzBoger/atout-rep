@@ -44,6 +44,30 @@ class ProductRepository extends ServiceEntityRepository
         ];
     }
 
+    public function findPaginatedProductsByProvider(int $page, int $limit, int $providerId): array
+    {
+        $offset = ($page - 1) * $limit;
+
+        $query = $this->createQueryBuilder('p')
+            ->where('p.isDeleted = false')
+            ->andWhere('p.provider = :providerId')
+            ->setParameter('providerId', $providerId)
+            ->orderBy('p.id', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->getQuery();
+
+        $paginator = new Paginator($query);
+
+        return [
+            'items' => $paginator,
+            'totalItems' => count($paginator),
+            'totalPages' => ceil(count($paginator) / $limit),
+        ];
+    }
+
+
+
     //    /**
     //     * @return Product[] Returns an array of Product objects
     //     */

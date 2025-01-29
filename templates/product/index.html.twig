@@ -4,12 +4,18 @@
 
 {% block body %}
     <div class="flex justify-center items-center my-4 max-lg:flex-col flex-wrap">
+        <div class="w-full">
+            <a href="{{ path('app_product_new') }}"
+               class="bg-primary-700 hover:bg-primary-800 rounded-lg py-2.5 px-4 text-white">Ajouter un produit</a>
+        </div>
+
         {% for product in products %}
             <div class="min-w-32rem w-32rem h-64 bg-white rounded-lg flex m-4 border border-secondary-300">
-                {% if product.photos|length > 0 %}
-                    <img class="object-cover w-44 rounded-l-lg" src="{{ asset(product.photos[0].photoPath) }}" alt="{{ product.name }}">
+                {% set image_path = product.photos[0].photoPath %}
+                {% if image_path starts with 'http' %}
+                    <img src="{{ image_path }}" alt="{{ product.name }}" class="object-cover w-44 rounded-l-lg">
                 {% else %}
-                    <img class="object-cover w-44 rounded-l-lg" src="{{ asset('default-image.jpg') }}" alt="default image">
+                    <img src="{{ asset('uploads/photos/' ~ image_path) }}" alt="{{ product.name }}" class="object-cover w-44 rounded-l-lg">
                 {% endif %}
                 <div class="w-full h-full flex flex-col justify-between">
                     <div class="flex flex-col justify-between h-full">
@@ -30,13 +36,20 @@
                         <form method="post" class="flex justify-end mr-4 mb-4">
                             <a href="{{ path('app_product_show', {'id': product.id}) }}"
                                class="bg-primary-700 hover:bg-primary-800 rounded-lg py-2 px-4 text-white">Visualiser</a>
+
                             {% if product.stock > 0 %}
-                            {#<a href="{{ path('cart_add', {'id': product.id}) }}"
-                                class="bg-success-700 hover:bg-success-800 rounded-md py-2 px-5 text-white">Ajouter</a>#}
+                                {#<a href="{{ path('cart_add', {'id': product.id}) }} class="bg-success-700 hover:bg-success-800 rounded-md py-2 px-5 text-white">Ajouter</a>#}
                             {% else %}
                                 <span class="text-gray-500 py-2 px-5">Indisponible</span>
                             {% endif %}
+
+                            {# Afficher le bouton Modifier si l'utilisateur a le rôle ROLE_PRESTA #}
+                            {% if is_granted('ROLE_PRESTA') %}
+                                <a href="{{ path('app_product_edit', {'id': product.id}) }}"
+                                   class="bg-warning-700 hover:bg-warning-800 rounded-lg py-2 px-4 text-white ml-2">Modifier</a>
+                            {% endif %}
                         </form>
+
                     </div>
                 </div>
             </div>

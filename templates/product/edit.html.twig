@@ -3,11 +3,32 @@
 {% block title %}Edit Product{% endblock %}
 
 {% block body %}
-    <h1>Edit Product</h1>
+    <div class="my-8 text-4xl font-semibold flex justify-center">
+        Modification du produit
+    </div>
+    <div class="flex justify-center">
+        <div class="bg-white rounded-lg border border-[#C8CDD7] w-[600px]">
+            {{ form_start(form) }}
+            <div class="mx-4 mt-4 grid grid-cols-2 gap-2">
+                {{ form_row(form.name) }}
+                {{ form_row(form.weight) }}
+                <div class="col-span-2">
+                    {{ form_row(form.description) }}
+                </div>
+                {{ form_row(form.length) }}
+                {{ form_row(form.width) }}
+                {{ form_row(form.height) }}
+                {{ form_row(form.stock) }}
+                {{ form_row(form.price) }}
+            </div>
 
-    {{ include('product/_form.html.twig', {'button_label': 'Update'}) }}
+            <div class="flex flex-col my-4">
+                <button type="submit" class="bg-success-700 hover:bg-success-800 rounded-lg py-2 px-4 text-white mx-4">
+                    Modifier
+                </button>
+            </div>
 
-    <a href="{{ path('app_product_index') }}">back to list</a>
-
-    {{ include('product/_delete_form.html.twig') }}
+            {{ form_end(form) }}
+        </div>
+    </div>
 {% endblock %}
