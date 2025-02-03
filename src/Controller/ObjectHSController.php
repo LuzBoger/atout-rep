@@ -17,6 +17,8 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/request-object-hs')]
@@ -24,9 +26,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ObjectHSController extends AbstractController
 {
     #[Route(name: 'app_object_hs_index', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
     public function index(ObjectHSRepository $objectHSRepository, Security $security): Response
     {
+        $this->denyAccessUnlessGranted('repair_objects');
         $user = $security->getUser();
 
         $objectHS = $objectHSRepository->findByUser($user);
@@ -37,9 +39,9 @@ class ObjectHSController extends AbstractController
     }
 
     #[Route('/new', name: 'app_object_hs_new', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('repair_objects');
         $step = (int) $request->get('step', 1);
 
         $formObjectHS = $this->createForm(ObjectHSType::class, new ObjectHS());
@@ -143,14 +145,11 @@ class ObjectHSController extends AbstractController
 
 
     #[Route('/{id}', name: 'app_object_hs_show', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
     public function show(ObjectHS $objectHS, Security $security): Response
     {
+        $this->denyAccessUnlessGranted('repair_objects');
         // Vérifiez si l'utilisateur est connecté
         $user = $security->getUser();
-        if (!$user) {
-            throw $this->createAccessDeniedException('Vous devez être connecté pour accéder à cette page.');
-        }
 
         // Vérifiez si l'utilisateur connecté est bien le propriétaire de l'objet
         if ($objectHS->getClient() !== $user) {
@@ -164,9 +163,17 @@ class ObjectHSController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_object_hs_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER')]
     public function edit(Request $request, ObjectHS $objectHS, EntityManagerInterface $entityManager): Response
     {
+        /** @var UserInterface|null $user */
+        $user = $this->getUser();
+
+        // Vérification que l'utilisateur est connecté et est bien le propriétaire de l'objet
+        if (!$user || $objectHS->getClient() !== $user) {
+            throw new AccessDeniedException('Vous n\'avez pas le droit de modifier cet objet.');
+        }
+
+        $this->denyAccessUnlessGranted('repair_objects');
         $formObjectHS = $this->createForm(ObjectHSType::class, $objectHS);
         $formObjectHS->handleRequest($request);
 
@@ -183,11 +190,20 @@ class ObjectHSController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_object_h_s_delete', methods: ['POST'])]
-    #[IsGranted('ROLE_USER')]
-    public function delete(Request $request, ObjectHS $objectH, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, ObjectHS $objectHS, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$objectH->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($objectH);
+
+        $this->denyAccessUnlessGranted('repair_objects');
+        /** @var UserInterface|null $user */
+        $user = $this->getUser();
+
+        // Vérification que l'utilisateur est connecté et est bien le propriétaire de l'objet
+        if (!$user || $objectHS->getClient() !== $user) {
+            throw new AccessDeniedException('Vous n\'avez pas le droit de modifier cet objet.');
+        }
+
+        if ($this->isCsrfTokenValid('delete'.$objectHS->getId(), $request->getPayload()->getString('_token'))) {
+            $entityManager->remove($objectHS);
             $entityManager->flush();
         }
 

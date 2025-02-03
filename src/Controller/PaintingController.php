@@ -21,9 +21,10 @@ final class PaintingController extends AbstractController
 {
 
     #[Route('/new', name: 'app_painting_new', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('repair_house');
+
         $step = (int) $request->get('step', 1);
 
         $formPainting = $this->createForm(PaintingType::class, new Painting());
@@ -119,18 +120,18 @@ final class PaintingController extends AbstractController
 
 
     #[Route('/{id}', name: 'app_painting_show', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
     public function show(Painting $painting): Response
     {
+        $this->denyAccessUnlessGranted('repair_house');
         return $this->render('painting/show.html.twig', [
             'painting' => $painting,
         ]);
     }
 
     #[Route('/{id}', name: 'app_painting_delete', methods: ['POST'])]
-    #[IsGranted('ROLE_USER')]
     public function delete(Request $request, Painting $painting, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('repair_house');
         if ($this->isCsrfTokenValid('delete'.$painting->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($painting);
             $entityManager->flush();

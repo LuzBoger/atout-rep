@@ -23,9 +23,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class RoofingController extends AbstractController
 {
     #[Route('/new', name: 'app_roofing_new', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('repair_house');
         $step = (int) $request->get('step', 1);
 
         $formRoofing = $this->createForm(RoofingType::class, new Roofing());
@@ -120,9 +120,9 @@ final class RoofingController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_roofing_show', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
     public function show(Roofing $roofing, Security $security): Response
     {
+        $this->denyAccessUnlessGranted('repair_house');
         $user = $security->getUser();
 
         if (!$user || $roofing->getClient() !== $user) {
@@ -135,9 +135,9 @@ final class RoofingController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_roofing_delete', methods: ['POST'])]
-    #[IsGranted('ROLE_USER')]
     public function delete(Request $request, Roofing $roofing, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('repair_house');
         if ($this->isCsrfTokenValid('delete' . $roofing->getId(), $request->get('_token'))) {
             $entityManager->remove($roofing);
             $entityManager->flush();

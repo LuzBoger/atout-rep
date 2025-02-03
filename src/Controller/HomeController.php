@@ -21,9 +21,10 @@ class HomeController extends AbstractController
         ]);
     }
     #[Route('/dashboard', name: 'app_dashboard_content')]
-    #[IsGranted('ROLE_USER')]
     public function app_dashboard_content(Security $security, ObjectHSRepository $objectHSRepository, HomeRepairRepository $homeRepairRepository): Response
     {
+        $this->denyAccessUnlessGranted('user_zone');
+
         $user = $security->getUser();
         $objectHS = $objectHSRepository->findByUserWithMaximumOfThree($user);
         $homeRepairs = $homeRepairRepository->findByUserWithMaximumOfThree($user);

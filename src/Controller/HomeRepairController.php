@@ -15,6 +15,8 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/request-repair-house')]
@@ -22,9 +24,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class HomeRepairController extends AbstractController
 {
     #[Route(name: 'app_home_repair_index', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
     public function index(HomeRepairRepository $homeRepairRepository, Security $security): Response
     {
+        $this->denyAccessUnlessGranted('repair_house');
         $user = $security->getUser();
         $homeRepairs = $homeRepairRepository->findByUser($user);
 
@@ -43,9 +45,17 @@ final class HomeRepairController extends AbstractController
 
 
     #[Route('/{id}', name: 'app_home_repair_show', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
     public function show(HomeRepair $homeRepair): Response
     {
+        $this->denyAccessUnlessGranted('repair_house');
+        /** @var UserInterface|null $user */
+        $user = $this->getUser();
+
+        // Vérification que l'utilisateur est connecté et est bien le propriétaire de l'objet
+        if (!$user || $homeRepair->getClient() !== $user) {
+            throw new AccessDeniedException('Vous n\'avez pas le droit de modifier cet objet.');
+        }
+
         // Vérifie le type de l'entité et redirige vers la route correspondante
         if ($homeRepair instanceof Roofing) {
             return $this->redirectToRoute('app_roofing_show', ['id' => $homeRepair->getId()]);
@@ -58,9 +68,17 @@ final class HomeRepairController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_home_repair_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER')]
     public function edit(Request $request, HomeRepair $homeRepair, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('repair_house');
+        /** @var UserInterface|null $user */
+        $user = $this->getUser();
+
+        // Vérification que l'utilisateur est connecté et est bien le propriétaire de l'objet
+        if (!$user || $homeRepair->getClient() !== $user) {
+            throw new AccessDeniedException('Vous n\'avez pas le droit de modifier cet objet.');
+        }
+
         if ($homeRepair instanceof Roofing) {
             $form = $this->createForm(RoofingType::class, $homeRepair);
             $form->handleRequest($request);
@@ -96,9 +114,16 @@ final class HomeRepairController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_home_repair_delete', methods: ['POST'])]
-    #[IsGranted('ROLE_USER')]
     public function delete(Request $request, HomeRepair $homeRepair, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('repair_house');
+        /** @var UserInterface|null $user */
+        $user = $this->getUser();
+
+        // Vérification que l'utilisateur est connecté et est bien le propriétaire de l'objet
+        if (!$user || $homeRepair->getClient() !== $user) {
+            throw new AccessDeniedException('Vous n\'avez pas le droit de modifier cet objet.');
+        }
         if ($this->isCsrfTokenValid('delete'.$homeRepair->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($homeRepair);
             $entityManager->flush();

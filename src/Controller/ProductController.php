@@ -21,9 +21,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class ProductController extends AbstractController
 {
     #[Route('/products', name: 'app_product_index', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
     public function index(ProductRepository $productRepository, Request $request, Security $security): Response
     {
+        $this->denyAccessUnlessGranted('repair_house');
         $page = $request->query->getInt('page', 1);
         $limit = 10;
 

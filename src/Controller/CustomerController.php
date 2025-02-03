@@ -18,9 +18,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class CustomerController extends AbstractController
 {
     #[Route('/{id}/profil', name: 'app_profil', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER')]
     public function index(Request $request, Account $user, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('user_zone');
 
         if($user instanceof Customer){
             $formCustomer = $this->createForm(EditCustomerType::class, $user);

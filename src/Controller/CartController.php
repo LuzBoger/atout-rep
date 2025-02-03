@@ -14,22 +14,20 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/cart')]
 class CartController extends AbstractController
 {
     #[Route('/add/{id}', name: 'app_cart_add', methods: ['POST'])]
-    #[IsGranted('ROLE_USER')]
     public function add(Product $product, Request $request, EntityManagerInterface $entityManager, Security $security): Response
     {
+        $this->denyAccessUnlessGranted('user_zone');
+
         /** @var Customer $customer */
         $customer = $security->getUser();
-
-        dump($customer);
-        if (!$customer) {
-            return $this->redirectToRoute('app_login'); // Redirige vers la connexion si non connecté
-        }
 
         $quantity = (int) $request->request->get('quantity');
 
@@ -78,9 +76,9 @@ class CartController extends AbstractController
     }
 
     #[Route('/cart', name: 'app_cart_index', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
     public function index(Security $security, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('user_zone');
         $user = $security->getUser();
 
         if (!$user) {
@@ -112,9 +110,9 @@ class CartController extends AbstractController
     }
 
     #[Route('/cart/remove/{id}', name: 'app_cart_remove', methods: ['POST'])]
-    #[IsGranted('ROLE_USER')]
     public function remove(CartProduct $cartProduct, EntityManagerInterface $entityManager, Security $security): Response
     {
+        $this->denyAccessUnlessGranted('user_zone');
         $user = $security->getUser();
 
         // Vérification que l'utilisateur est bien propriétaire du panier
@@ -133,9 +131,9 @@ class CartController extends AbstractController
     }
 
     #[Route('/cart/update/{id}', name: 'app_cart_update', methods: ['POST'])]
-    #[IsGranted('ROLE_USER')]
     public function updateQuantity(CartProduct $cartProduct, Request $request, EntityManagerInterface $entityManager, Security $security): JsonResponse
     {
+        $this->denyAccessUnlessGranted('user_zone');
         $user = $security->getUser();
 
         // Vérifier que l'utilisateur est bien propriétaire du panier
