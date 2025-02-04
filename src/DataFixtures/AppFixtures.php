@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Address;
 use App\Entity\Admin;
+use App\Entity\Category;
 use App\Entity\Customer;
 use App\Entity\Dates;
 use App\Entity\ObjectHS;
@@ -12,6 +13,7 @@ use App\Entity\Photo;
 use App\Entity\Product;
 use App\Entity\Provider;
 use App\Entity\Roofing;
+use App\Entity\Tag;
 use App\Enum\PaintType;
 use App\Enum\RoofMaterial;
 use App\Enum\StateObject;
@@ -54,33 +56,87 @@ class AppFixtures extends Fixture
             $providers[] = $provider;
         }
 
-        // Create Products
-        foreach ($providers as $provider) {
-            for ($k = 0; $k < rand(5, 15); $k++) {
-                $product = new Product();
-                $product->setName($faker->words(3, true));
-                $product->setWeight($faker->randomFloat(1, 0.1, 10));
-                $product->setDescription($faker->text(200));
-                $product->setLength($faker->randomFloat(2, 10, 100));
-                $product->setWidth($faker->randomFloat(2, 10, 100));
-                $product->setHeight($faker->randomFloat(2, 10, 100));
-                $product->setStock($faker->numberBetween(0, 100));
-                $product->setPrice($faker->randomFloat(2, 5, 500));
-                $product->setDeleted(false);
-                $product->setProvider($provider);
-                $manager->persist($product);
+        // 🔹 Définition des Catégories pour les pièces en vrac
+        $categoryNames = [
+            'Électronique',       // Résistances, condensateurs...
+            'Électromécanique',   // Moteurs, relais, bobines...
+            'Connectique',        // Câbles, borniers, prises...
+            'Pièces Détachées',   // Vis, joints, coques...
+            'Outillage'           // Fer à souder, pinces...
+        ];
+        $categories = [];
 
-                // Add Photos for Products
-                for ($m = 0; $m < rand(1, 3); $m++) {
-                    $photo = new Photo();
-                    $photo->setName($faker->word());
-                    $photo->setPhotoPath("https://picsum.photos/1920/1080?random=" . rand(1, 10000));
-                    $photo->setUploadDate($faker->dateTimeThisYear());
-                    $photo->setProduct($product); // Association avec le produit
-                    $manager->persist($photo);
+        foreach ($categoryNames as $categoryName) {
+            $category = new Category();
+            $category->setName($categoryName);
+            $manager->persist($category);
+            $categories[] = $category;
+        }
+
+        // 🔹 Définition des Tags
+        $tagNames = ['Neuf', 'Occasion', 'Reconditionné', 'Déstockage', 'Lot', 'Unité'];
+        $tags = [];
+
+        foreach ($tagNames as $tagName) {
+            $tag = new Tag();
+            $tag->setName($tagName);
+            $manager->persist($tag);
+            $tags[] = $tag;
+        }
+
+        // 🔹 Définition des types de produits et leurs photos associées
+        $productData = [
+            ["Vis en acier inox", "Pièces Détachées", "product_photo_1.png"],   // Vis
+            ["Joint en silicone", "Pièces Détachées", "product_photo_2.png"],   // Joint
+            ["Câble de cuivre 2mm", "Connectique", "product_photo_3.png"],      // Câble de cuivre
+            ["Résistance 1KΩ", "Électronique", "product_photo_4.png"],          // Résistance
+            ["Condensateur 470uF", "Électronique", "product_photo_5.png"],      // Condensateur
+        ];
+
+        // Création des Produits pour chaque prestataire
+        foreach ($providers as $provider) {
+            foreach ($productData as [$productName, $categoryName, $photoFile]) {
+                for ($k = 0; $k < rand(2, 5); $k++) { // Chaque prestataire a plusieurs produits
+                    $product = new Product();
+                    $product->setName($productName);
+                    $product->setWeight($faker->randomFloat(1, 0.01, 5)); // Poids ajusté
+                    $product->setDescription($faker->sentence(10));
+                    $product->setLength($faker->randomFloat(2, 1, 10));
+                    $product->setWidth($faker->randomFloat(2, 1, 10));
+                    $product->setHeight($faker->randomFloat(2, 1, 10));
+                    $product->setStock($faker->numberBetween(10, 1000)); // Vendu en vrac => stock élevé
+                    $product->setPrice($faker->randomFloat(2, 0.10, 50));
+                    $product->setDeleted(false);
+                    $product->setProvider($provider);
+
+                    // Assignation d'une catégorie adaptée
+                    foreach ($categories as $category) {
+                        if ($category->getName() === $categoryName) {
+                            $product->addCategory($category);
+                            break;
+                        }
+                    }
+
+                    // Assignation de Tags aléatoires (1 à 2 max)
+                    $assignedTags = $faker->randomElements($tags, rand(1, 2));
+                    foreach ($assignedTags as $tag) {
+                        $product->addTag($tag);
+                    }
+
+                    $manager->persist($product);
+
+                    //  Ajout de Photos adaptées au produit (1 à 5 images du même type)
+                    for ($m = 1; $m <= rand(1, 5); $m++) {
+                        $photo = new Photo();
+                        $photo->setName("photo_{$m}");
+                        $photo->setPhotoPath($photoFile);
+                        $photo->setUploadDate($faker->dateTimeThisYear());
+                        $photo->setProduct($product);
+                        $manager->persist($photo);
+                    }
                 }
             }
-            }
+        }
 
         // Create Customers
         $customers = [];
@@ -110,94 +166,81 @@ class AppFixtures extends Fixture
             }
         }
 
-// Create Requests
+        // Create Requests
         foreach ($customers as $customer) {
             for ($k = 0; $k < rand(1, 3); $k++) {
                 $baseRequestType = rand(0, 2); // 0 = ObjectHS, 1 = Roofing, 2 = Painting
+                $request = null;
+                $requestType = ''; // Variable pour le type de requête
 
                 if ($baseRequestType === 0) {
-                    // Create ObjectHS Request
-                    $objectHS = new ObjectHS();
-                    $objectHS->setClient($customer);
-                    $objectHS->setCreationDate($faker->dateTimeThisYear());
-                    $objectHS->setModificationDate($faker->dateTimeThisYear('+1 month'));
-                    $objectHS->setStatus($faker->randomElement([
-                        StatusRequest::PENDING,
-                        StatusRequest::COMPLETED,
-                        StatusRequest::CANCELLED
-                    ]));
-                    $objectHS->setName($faker->word());
-                    $objectHS->setState($faker->randomElement(StateObject::cases()));
-                    $objectHS->setAge($faker->numberBetween(1, 10));
-                    $objectHS->setDetails($faker->text(200));
-                    $manager->persist($objectHS);
-
-                    // Create Photos for ObjectHS
-                    for ($m = 0; $m < rand(1, 3); $m++) {
-                        $photo = new Photo();
-                        $photo->setName($faker->word());
-                        $photo->setPhotoPath("https://picsum.photos/1920/1080?random=" . rand(1, 10000));
-                        $photo->setUploadDate($faker->dateTimeThisYear());
-                        $photo->setObjectHS($objectHS);
-                        $manager->persist($photo);
-                    }
+                    $request = new ObjectHS();
+                    $requestType = 'object_hs'; // Définir le type
+                    $request->setName($faker->word());
+                    $request->setState($faker->randomElement(StateObject::cases()));
+                    $request->setAge($faker->numberBetween(1, 10));
+                    $request->setDetails($faker->text(200));
                 } elseif ($baseRequestType === 1) {
-                    // Create Roofing Request
-                    $roofing = new Roofing();
-                    $roofing->setClient($customer);
-                    $roofing->setCreationDate($faker->dateTimeThisYear());
-                    $roofing->setModificationDate($faker->dateTimeThisYear('+1 month'));
-                    $roofing->setStatus($faker->randomElement([
-                        StatusRequest::PENDING,
-                        StatusRequest::COMPLETED,
-                        StatusRequest::CANCELLED
-                    ]));
-                    $roofing->setRoofMaterial($faker->randomElement(RoofMaterial::cases()));
-                    $roofing->setNeedInsulation($faker->boolean());
-                    $roofing->setDescription($faker->text(300));
-                    $manager->persist($roofing);
-
-                    // Create Photos for Roofing
-                    for ($m = 0; $m < rand(1, 3); $m++) {
-                        $photo = new Photo();
-                        $photo->setName($faker->word());
-                        $photo->setPhotoPath("https://picsum.photos/1920/1080?random=" . rand(1, 10000));
-                        $photo->setUploadDate($faker->dateTimeThisYear());
-                        $photo->setHomeRepair($roofing);
-                        $manager->persist($photo);
-                    }
+                    $request = new Roofing();
+                    $requestType = 'roofing'; // Définir le type
+                    $request->setRoofMaterial($faker->randomElement(RoofMaterial::cases()));
+                    $request->setNeedInsulation($faker->boolean());
+                    $request->setDescription($faker->text(300));
                 } else {
-                    // Create Painting Request
-                    $painting = new Painting();
-                    $painting->setClient($customer);
-                    $painting->setCreationDate($faker->dateTimeThisYear());
-                    $painting->setModificationDate($faker->dateTimeThisYear('+1 month'));
-                    $painting->setStatus($faker->randomElement([
-                        StatusRequest::PENDING,
-                        StatusRequest::COMPLETED,
-                        StatusRequest::CANCELLED
-                    ]));
-                    $painting->setSurfaceArea($faker->numberBetween(20, 500));
-                    $painting->setPaintType($faker->randomElement(PaintType::cases()));
-                    $painting->setDescription($faker->text(300));
-                    $manager->persist($painting);
+                    $request = new Painting();
+                    $requestType = 'painting'; // Définir le type
+                    $request->setSurfaceArea($faker->numberBetween(20, 500));
+                    $request->setPaintType($faker->randomElement(PaintType::cases()));
+                    $request->setDescription($faker->text(300));
+                }
 
-                    // Create Photos for Painting
-                    for ($m = 0; $m < rand(1, 3); $m++) {
+                $request->setClient($customer);
+                $request->setCreationDate($faker->dateTimeThisYear());
+                $request->setModificationDate($faker->dateTimeBetween('-3 months', 'now'));
+                $request->setStatus($faker->randomElement([
+                    StatusRequest::PENDING,
+                    StatusRequest::COMPLETED,
+                    StatusRequest::CANCELLED
+                ]));
+
+                $manager->persist($request);
+
+                // Create Dates for each Request
+                for ($d = 0; $d < rand(1, 5); $d++) {
+                    $date = new Dates();
+                    $date->setRequest($request);
+                    $date->setDate($faker->dateTimeBetween('-1 month', '+6 months'));
+
+                    // Associer une adresse aléatoire au `Dates`
+                    if (!empty($addresses)) {
+                        $date->setAddress($faker->randomElement($addresses));
+                    }
+
+                    $manager->persist($date);
+                }
+
+                // Create Photos
+                $photoTypes = $baseRequestType === 0 ? ['front', 'side', 'top'] : ['in', 'out'];
+                foreach ($photoTypes as $type) {
+                    for ($m = 1; $m <= rand(1, 3); $m++) {
                         $photo = new Photo();
-                        $photo->setName($faker->word());
-                        $photo->setPhotoPath("https://picsum.photos/1920/1080?random=" . rand(1, 10000));
+                        $photoName = "{$requestType}_{$type}_{$m}.png"; // Nom avec type inclus
+                        $photo->setName($photoName);
+                        $photo->setPhotoPath("$photoName"); // Chemin avec type inclus
                         $photo->setUploadDate($faker->dateTimeThisYear());
-                        $photo->setHomeRepair($painting);
+
+                        if ($baseRequestType === 0) {
+                            $photo->setObjectHS($request);
+                        } else {
+                            $photo->setHomeRepair($request);
+                        }
+
                         $manager->persist($photo);
                     }
                 }
             }
         }
 
-
         $manager->flush();
-
     }
-
 }

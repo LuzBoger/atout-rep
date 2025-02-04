@@ -11,6 +11,7 @@ use App\Form\PaintingType;
 use App\Form\PhotosCollectionType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -120,18 +121,32 @@ final class PaintingController extends AbstractController
 
 
     #[Route('/{id}', name: 'app_painting_show', methods: ['GET'])]
-    public function show(Painting $painting): Response
+    public function show(Painting $painting, Security $security): Response
     {
         $this->denyAccessUnlessGranted('repair_house');
+
+        $user = $security->getUser();
+
+        if (!$user || $painting->getClient() !== $user) {
+            throw $this->createAccessDeniedException('Vous n\'avez pas accès à ce projet.');
+        }
+
         return $this->render('painting/show.html.twig', [
             'painting' => $painting,
         ]);
     }
 
     #[Route('/{id}', name: 'app_painting_delete', methods: ['POST'])]
-    public function delete(Request $request, Painting $painting, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, Painting $painting, EntityManagerInterface $entityManager, Security $security): Response
     {
         $this->denyAccessUnlessGranted('repair_house');
+
+        $user = $security->getUser();
+
+        if (!$user || $painting->getClient() !== $user) {
+            throw $this->createAccessDeniedException('Vous n\'avez pas accès à ce projet.');
+        }
+
         if ($this->isCsrfTokenValid('delete'.$painting->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($painting);
             $entityManager->flush();

@@ -14,6 +14,7 @@ final class AccessVoter extends Voter
     public const PRODUCT_MANAGEMENT = 'product_management';
     public const ADMIN_ZONE = 'admin_zone';
     public const USER_ZONE = 'user_zone';
+    public const PROFIL_ZONE = 'profil_zone';
     public const PRESTA_ZONE = 'presta_zone';
 
     private array $permissions = [
@@ -24,6 +25,7 @@ final class AccessVoter extends Voter
         self::ADMIN_ZONE => ['ROLE_ADMIN'],
         self::USER_ZONE => ['ROLE_USER'],
         self::PRESTA_ZONE => ['ROLE_PRESTA'],
+        self::PROFIL_ZONE => ['ROLE_USER', 'ROLE_PRESTA'],
     ];
 
     protected function supports(string $attribute, mixed $subject): bool

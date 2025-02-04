@@ -10,13 +10,9 @@
         </div>
 
         {% for product in products %}
-            <div class="min-w-32rem w-32rem h-64 bg-white rounded-lg flex m-4 border border-secondary-300">
+            <div class="min-w-32rem w-32rem h-80 bg-white rounded-lg flex m-4 border border-secondary-300">
                 {% set image_path = product.photos[0].photoPath %}
-                {% if image_path starts with 'http' %}
-                    <img src="{{ image_path }}" alt="{{ product.name }}" class="object-cover w-44 rounded-l-lg">
-                {% else %}
-                    <img src="{{ asset('uploads/photos/' ~ image_path) }}" alt="{{ product.name }}" class="object-cover w-44 rounded-l-lg">
-                {% endif %}
+                <img src="{{ asset('uploads/photos/' ~ image_path) }}" alt="{{ product.name }}" class="object-cover w-44 rounded-l-lg">
                 <div class="w-full h-full flex flex-col justify-between">
                     <div class="flex flex-col justify-between h-full">
                         <div>
@@ -25,7 +21,28 @@
                                 {% set maxLength = 100 %}
                                 {{ product.description | length > maxLength ? product.description | slice(0, maxLength) ~ '...' : product.description }}
                             </p>
+
+                            <!-- Affichage des catégories -->
+                            {% if product.categories is not empty %}
+                                <p class="text-md font-semibold mx-4 mt-2">Catégories :</p>
+                                <ul class="text-sm mx-4 list-disc list-inside text-gray-600">
+                                    {% for category in product.categories %}
+                                        <li>{{ category.name }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+
+                            <!-- Affichage des tags -->
+                            {% if product.tags is not empty %}
+                                <p class="text-md font-semibold mx-4 mt-2">Tags :</p>
+                                <div class="flex flex-wrap gap-2 mx-4">
+                                    {% for tag in product.tags %}
+                                        <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">{{ tag.name }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                         </div>
+
                         <div>
                             <p class="text-md font-semibold mx-4">Prix : {{ product.price | number_format(2, ',', ' ') }} €</p>
                             <p class="text-md font-semibold mx-4">Stock : {{ product.stock }}</p>
@@ -48,6 +65,7 @@
                 </div>
             </div>
         {% endfor %}
+
     </div>
 
     {# Navigation de pagination #}
