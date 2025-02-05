@@ -1,0 +1,39 @@
+<div class="overflow-auto lg:overflow-visible">
+    <table class="table-auto w-full text-sm border-separate border-spacing-y-3 border-spacing-x-0">
+        <thead class="bg-primary-700 text-white">
+        <tr>
+            <th class="p-3 rounded-l-lg">ID</th>
+            <th class="p-3 text-left">Date de création</th>
+            <th class="p-3 text-left">Date de modification</th>
+            <th class="p-3 text-left">Statut</th>
+            <th class="p-3 text-left">Type</th>
+            <th class="p-3 text-left">Description</th>
+            <th class="p-3 text-left rounded-r-lg">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in home_repairs_with_types %}
+            <tr class="bg-white rounded-lg">
+                <td class="p-3 rounded-l-lg">{{ item.repair.id }}</td>
+                <td class="p-3">{{ item.repair.creationDate ? item.repair.creationDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td class="p-3">{{ item.repair.ModificationDate ? item.repair.ModificationDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td class="p-3">{{ item.repair.status.value }}</td>
+                <td class="p-3">
+                    <span class="bg-primary-700 text-white rounded-lg p-1.5">{{ item.type }}</span>
+                </td>
+                <td class="p-3">{{ item.repair.description }}</td>
+                <td class="p-3 rounded-r-lg">
+                    <div class="flex flex-col gap-4 items-center h-full">
+                        <a href="{{ path('app_home_repair_show_admin', {'id': item.repair.id}) }}"
+                           class="text-primary-700 hover:underline font-semibold">Voir</a>
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4" class="p-3 text-center text-red-400 font-semibold">Aucune donnée trouvée</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

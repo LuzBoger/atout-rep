@@ -16,7 +16,7 @@ abstract class HomeRepair extends Request
     /**
      * @var Collection<int, Photo>
      */
-    #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'HomeRepair')]
+    #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'HomeRepair',  cascade: ['remove'] )]
     private Collection $photos;
 
     abstract public function getType(): string;

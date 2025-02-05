@@ -12,5 +12,4 @@ enum StatusRequest: string
     case COMPLETED  = 'completed';
     case CANCELLED = 'cancelled';
 
-
 }

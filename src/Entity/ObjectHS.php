@@ -26,7 +26,7 @@ class ObjectHS extends Request
     /**
      * @var Collection<int, Photo>
      */
-    #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'ObjectHS')]
+    #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'ObjectHS', cascade: ['remove'] )]
     private Collection $photos;
 
     public function __construct()

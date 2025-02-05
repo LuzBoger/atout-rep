@@ -28,7 +28,7 @@ class Request
     private ?\DateTimeInterface $creationDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $ModificationDate = null;
+    private ?\DateTimeInterface $modificationDate = null;
 
     #[ORM\Column(enumType: StatusRequest::class)]
     private ?StatusRequest $status = null;
@@ -36,7 +36,7 @@ class Request
     /**
      * @var Collection<int, Dates>
      */
-    #[ORM\OneToMany(targetEntity: Dates::class, mappedBy: 'Request')]
+    #[ORM\OneToMany(targetEntity: Dates::class, mappedBy: 'Request',  cascade: ['remove'])]
     private Collection $dates;
 
     public function __construct()
@@ -75,12 +75,12 @@ class Request
 
     public function getModificationDate(): ?\DateTimeInterface
     {
-        return $this->ModificationDate;
+        return $this->modificationDate;
     }
 
-    public function setModificationDate(\DateTimeInterface $ModificationDate): static
+    public function setModificationDate(\DateTimeInterface $modificationDate): static
     {
-        $this->ModificationDate = $ModificationDate;
+        $this->modificationDate = $modificationDate;
 
         return $this;
     }

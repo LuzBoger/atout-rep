@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement annulé{% endblock %}
+
+{% block body %}
+    <div class="container mx-auto mt-10 text-center">
+        <h1 class="text-3xl font-bold text-red-600">Paiement annulé ❌</h1>
+        <p class="mt-4 text-lg">Votre paiement n'a pas été finalisé. Vous pouvez réessayer ou revenir à la boutique.</p>
+
+        <div class="mt-6">
+            <a href="{{ path('checkout') }}"
+               class="px-6 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">
+                Réessayer le paiement
+            </a>
+            <a href="{{ path('app_product_index') }}"
+               class="px-6 py-2 bg-primary-700 text-white rounded-lg hover:bg-primary-800">
+                Retour à la boutique
+            </a>
+        </div>
+    </div>
+{% endblock %}

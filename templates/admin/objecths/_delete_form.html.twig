@@ -1,0 +1,8 @@
+<form method="post" action="{{ path('app_object_hs_delete_admin', {'id': object_h.id}) }}"
+      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet élément ?');">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ object_h.id) }}">
+    <button type="submit" 
+            class="bg-error-500 text-white px-4 py-2 rounded-lg hover:bg-error-600">
+        Supprimer
+    </button>
+</form>

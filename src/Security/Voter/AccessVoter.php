@@ -20,12 +20,12 @@ final class AccessVoter extends Voter
     private array $permissions = [
         self::REPAIR_OBJECTS => ['ROLE_USER'],
         self::REPAIR_HOUSE => ['ROLE_USER'],
-        self::MARKETPLACE => ['ROLE_USER'],
+        self::MARKETPLACE => ['ROLE_USER', 'ROLE_ADMIN'],
         self::PRODUCT_MANAGEMENT => ['ROLE_PRESTA'],
         self::ADMIN_ZONE => ['ROLE_ADMIN'],
         self::USER_ZONE => ['ROLE_USER'],
         self::PRESTA_ZONE => ['ROLE_PRESTA'],
-        self::PROFIL_ZONE => ['ROLE_USER', 'ROLE_PRESTA'],
+        self::PROFIL_ZONE => ['ROLE_USER', 'ROLE_PRESTA', 'ROLE_ADMIN'],
     ];
 
     protected function supports(string $attribute, mixed $subject): bool

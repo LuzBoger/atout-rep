@@ -1,0 +1,42 @@
+<div class="overflow-auto lg:overflow-visible">
+    <table class="table-auto w-full text-sm border-separate border-spacing-y-3 border-spacing-x-0">
+        <thead class="bg-primary-700 text-white">
+        <tr>
+            <th class="py-3 rounded-l-lg">ID</th>
+            <th class="py-3 text-left">Date de création</th>
+            <th class="py-3 text-left">Date de modification</th>
+            <th class="py-3 text-left">Statut</th>
+            <th class="py-3 text-left">Nom</th>
+            <th class="py-3 text-left">État</th>
+            <th class="py-3 text-left">Âge</th>
+            <th class="py-3 text-left">Détails</th>
+            <th class="py-3 text-left rounded-r-lg">Actions</th>
+        </thead>
+        <tbody>
+        {% for object_h in object_hs %}
+            <tr class="bg-white  rounded-lg">
+                <td class="p-3 rounded-l-lg">{{ object_h.id }}</td>
+                <td class="p-3">{{ object_h.creationDate ? object_h.creationDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td class="p-3">{{ object_h.ModificationDate ? object_h.ModificationDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td class="p-3">{{ object_h.status.value }}</td>
+                <td class="p-3">{{ object_h.name }}</td>
+                <td class="p-3">
+                    <span class="bg-primary-700 text-white rounded-lg p-1.5">{{ object_h.state.value }}</span>
+                </td>
+                <td class="p-3">{{ object_h.age }}</td>
+                <td class="p-3">{{ object_h.Details }}</td>
+                <td class="p-3 rounded-r-lg">
+                    <div class="flex flex-col gap-4 items-center h-full">
+                        <a href="{{ path('app_object_hs_show_admin', {'id': object_h.id}) }}"
+                           class="text-primary-700 hover:underline font-semibold">Voir</a>
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="9" class="p-3 text-center text-red-400 font-semibold">Aucun enregistrement trouvé</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

@@ -7,7 +7,9 @@ use App\Entity\Product;
 use App\Entity\Provider;
 use App\Form\PhotosCollectionType;
 use App\Form\ProductType;
+use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
+use App\Repository\TagRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,24 +23,40 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class ProductController extends AbstractController
 {
     #[Route('/products', name: 'app_product_index', methods: ['GET'])]
-    public function index(ProductRepository $productRepository, Request $request, Security $security): Response
-    {
-        $this->denyAccessUnlessGranted('repair_house');
+    public function index(
+        ProductRepository $productRepository,
+        CategoryRepository $categoryRepository,
+        TagRepository $tagRepository,
+        Request $request): Response {
+        $this->denyAccessUnlessGranted('marketplace_access');
+
+        // Récupérer la page actuelle (par défaut 1)
         $page = $request->query->getInt('page', 1);
         $limit = 10;
 
-        // Récupération des produits avec pagination
-        $pagination = $productRepository->findPaginatedProducts($page, $limit);
+        // Récupération des filtres depuis la requête GET
+        $categoryId = $request->query->get('category');
+        $tagId = $request->query->get('tag');
 
-        // Récupérer l'utilisateur connecté
-        $user = $security->getUser();
-        $roles = $user ? $user->getRoles() : [];
+        // Vérifier si ce sont bien des entiers avant de les passer au repository
+        $categoryId = is_numeric($categoryId) ? (int) $categoryId : null;
+        $tagId = is_numeric($tagId) ? (int) $tagId : null;
+
+        // Récupération des produits avec les filtres et la pagination
+        $pagination = $productRepository->findPaginatedProducts($page, $limit, $categoryId, $tagId);
+
+        // Récupération de toutes les catégories et tags pour le formulaire de filtrage
+        $categories = $categoryRepository->findAll();
+        $tags = $tagRepository->findAll();
 
         return $this->render('product/index.html.twig', [
             'products' => $pagination['items'],
             'currentPage' => $page,
             'totalPages' => $pagination['totalPages'],
-            'roles' => $roles, // 👈 Ajout des rôles dans le rendu
+            'categories' => $categories,
+            'tags' => $tags,
+            'selectedCategory' => $categoryId,
+            'selectedTag' => $tagId
         ]);
     }
 

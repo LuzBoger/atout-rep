@@ -24,17 +24,43 @@ class ProductRepository extends ServiceEntityRepository
      * @param int $limit
      * @return array
      */
-    public function findPaginatedProducts(int $page, int $limit): array
+    public function findPaginatedProducts(int $page, int $limit, ?int $categoryId = null, ?int $tagId = null): array
     {
         $offset = ($page - 1) * $limit;
 
-        $query = $this->createQueryBuilder('p')
+        $queryBuilder = $this->createQueryBuilder('p')
             ->where('p.isDeleted = false')
-            ->orderBy('p.id', 'DESC')
-            ->setFirstResult($offset)
-            ->setMaxResults($limit)
-            ->getQuery();
+            ->leftJoin('p.categories', 'c')
+            ->leftJoin('p.tags', 't')
+            ->addSelect('c', 't');
 
+        // Scénario 1 : Si uniquement les tags sont renseignés
+        if ($tagId && !$categoryId) {
+            $queryBuilder->andWhere('t.id = :tagId')
+                ->setParameter('tagId', $tagId);
+        }
+
+        // Scénario 2 : Si uniquement les catégories sont renseignées
+        if ($categoryId && !$tagId) {
+            $queryBuilder->andWhere('c.id = :categoryId')
+                ->setParameter('categoryId', $categoryId);
+        }
+
+        // Scénario 3 : Si les deux filtres sont renseignés
+        if ($categoryId && $tagId) {
+            $queryBuilder->andWhere('c.id = :categoryId AND t.id = :tagId')
+                ->setParameter('categoryId', $categoryId)
+                ->setParameter('tagId', $tagId);
+        }
+
+        // Scénario 4 : Aucun filtre → Retourne tous les produits (déjà géré par défaut)
+
+        $queryBuilder->orderBy('p.id', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit);
+
+        // Exécution de la requête avec Paginator
+        $query = $queryBuilder->getQuery();
         $paginator = new Paginator($query);
 
         return [

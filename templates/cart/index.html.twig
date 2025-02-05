@@ -14,7 +14,7 @@
                 Continuer les achats
             </a>
             {% if cartProducts is not empty %}
-                <a href="#"
+                <a href="{{ path('checkout') }}"
                    class="inline-block px-6 py-2 bg-success-700 text-white rounded-lg hover:bg-success-800">
                     Valider la commande
                 </a>

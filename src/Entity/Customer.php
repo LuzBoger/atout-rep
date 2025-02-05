@@ -22,10 +22,17 @@ class Customer extends Account
     #[ORM\OneToMany(targetEntity: Address::class, mappedBy: 'customer')]
     private Collection $addresses;
 
+    /**
+     * @var Collection<int, OrderHistory>
+     */
+    #[ORM\OneToMany(targetEntity: OrderHistory::class, mappedBy: 'Customer')]
+    private Collection $orderHistories;
+
     public function __construct()
     {
         $this->requests = new ArrayCollection();
         $this->addresses = new ArrayCollection();
+        $this->orderHistories = new ArrayCollection();
     }
 
     /**
@@ -82,6 +89,36 @@ class Customer extends Account
             // set the owning side to null (unless already changed)
             if ($address->getCustomer() === $this) {
                 $address->setCustomer(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, OrderHistory>
+     */
+    public function getOrderHistories(): Collection
+    {
+        return $this->orderHistories;
+    }
+
+    public function addOrderHistory(OrderHistory $orderHistory): static
+    {
+        if (!$this->orderHistories->contains($orderHistory)) {
+            $this->orderHistories->add($orderHistory);
+            $orderHistory->setCustomer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrderHistory(OrderHistory $orderHistory): static
+    {
+        if ($this->orderHistories->removeElement($orderHistory)) {
+            // set the owning side to null (unless already changed)
+            if ($orderHistory->getCustomer() === $this) {
+                $orderHistory->setCustomer(null);
             }
         }
 

@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Admin;
 use App\Entity\Customer;
 use App\Entity\Account;
 use App\Entity\Provider;
 use App\Form\AddressType;
+use App\Form\EditAdminType;
 use App\Form\EditCustomerType;
 use App\Form\EditProviderType;
 use App\Form\RegistrationCustomerType;
@@ -23,6 +25,7 @@ class CustomerController extends AbstractController
     {
         $this->denyAccessUnlessGranted('profil_zone');
 
+        // Gestion du profil pour un utilisateur (Customer)
         if ($user instanceof Customer) {
             $formCustomer = $this->createForm(EditCustomerType::class, $user);
             $formCustomer->handleRequest($request);
@@ -47,6 +50,7 @@ class CustomerController extends AbstractController
             ]);
         }
 
+        // Gestion du profil pour un prestataire (Provider)
         if ($user instanceof Provider) {
             $formProvider = $this->createForm(EditProviderType::class, $user);
             $formProvider->handleRequest($request);
@@ -62,6 +66,25 @@ class CustomerController extends AbstractController
             return $this->render('provider/profil.html.twig', [
                 'formProvider' => $formProvider,
                 'provider' => $user,
+            ]);
+        }
+
+        // Gestion du profil pour un administrateur (Admin)
+        if ($user instanceof Admin) {
+            $formAdmin = $this->createForm(EditAdminType::class, $user);
+            $formAdmin->handleRequest($request);
+
+            if ($formAdmin->isSubmitted() && $formAdmin->isValid()) {
+                $user->setRoles(['ROLE_ADMIN']);
+                $entityManager->persist($user);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Modification du profil administrateur effectuée avec succès !');
+            }
+
+            return $this->render('admin/profil.html.twig', [
+                'formAdmin' => $formAdmin,
+                'admin' => $user,
             ]);
         }
 

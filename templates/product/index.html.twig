@@ -4,9 +4,41 @@
 
 {% block body %}
     <div class="flex justify-center items-center my-4 max-lg:flex-col flex-wrap">
-        <div class="w-full">
-            <a href="{{ path('app_product_new') }}"
-               class="bg-primary-700 hover:bg-primary-800 rounded-lg py-2.5 px-4 text-white">Ajouter un produit</a>
+        <div class="w-full flex justify-between items-center mb-4">
+            <!-- Bouton Ajouter un produit pour les prestataires -->
+            {% if app.user and 'ROLE_PRESTA' in app.user.roles %}
+                <a href="{{ path('app_product_new') }}"
+                   class="bg-primary-700 hover:bg-primary-800 rounded-lg py-2.5 px-4 text-white">
+                    Ajouter un produit
+                </a>
+            {% endif %}
+
+            <!-- Formulaire de filtrage -->
+            <form method="GET" action="{{ path('app_product_index') }}" class="flex items-center gap-4">
+                <label for="category" class="text-gray-700">Catégorie :</label>
+                <select name="category" id="category" class="border border-gray-300 rounded p-2">
+                    <option value="">Toutes</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}" {{ selectedCategory == category.id ? 'selected' : '' }}>
+                            {{ category.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <label for="tag" class="text-gray-700">Tag :</label>
+                <select name="tag" id="tag" class="border border-gray-300 rounded p-2">
+                    <option value="">Tous</option>
+                    {% for tag in tags %}
+                        <option value="{{ tag.id }}" {{ selectedTag == tag.id ? 'selected' : '' }}>
+                            {{ tag.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit" class="bg-primary-700 text-white px-4 py-2 rounded-lg hover:bg-primary-800">
+                    Filtrer
+                </button>
+            </form>
         </div>
 
         {% for product in products %}
@@ -65,7 +97,6 @@
                 </div>
             </div>
         {% endfor %}
-
     </div>
 
     {# Navigation de pagination #}
@@ -100,4 +131,3 @@
         </ul>
     </div>
 {% endblock %}
-

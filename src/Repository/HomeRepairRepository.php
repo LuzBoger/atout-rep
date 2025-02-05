@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\HomeRepair;
+use App\Enum\StatusRequest;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -34,6 +35,38 @@ class HomeRepairRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findPendingWithLimit(int $limit = 5): array
+    {
+        return array_map(function (HomeRepair $repair) {
+            return [
+                'repair' => $repair,
+                'type' => $repair->getType(), // Ajoute le type de réparation
+            ];
+        }, $this->createQueryBuilder('h')
+            ->where('h.status = :status')
+            ->setParameter('status', StatusRequest::PENDING)
+            ->orderBy('h.modificationDate', 'ASC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult());
+    }
+
+    public function findByStatusAndFilterByModificationDate(string $status = 'pending'): array
+    {
+        return array_map(function (HomeRepair $repair) {
+            return [
+                'repair' => $repair,
+                'type' => $repair->getType(), // Ajoute le type de réparation
+            ];
+        }, $this->createQueryBuilder('o')
+            ->andWhere('o.status = :status')
+            ->orderBy('o.modificationDate', 'ASC')
+            ->setParameter('status', $status)
+            ->getQuery()
+            ->getResult());
+    }
+
 
     //    /**
     //     * @return HomeRepair[] Returns an array of HomeRepair objects
