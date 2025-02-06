@@ -13,8 +13,7 @@
                 </a>
             {% endif %}
 
-            <!-- Formulaire de filtrage -->
-            <form method="GET" action="{{ path('app_product_index') }}" class="flex items-center gap-4">
+            <form method="GET" action="{{ app.request.uri }}" class="flex items-center gap-4">
                 <label for="category" class="text-gray-700">Catégorie :</label>
                 <select name="category" id="category" class="border border-gray-300 rounded p-2">
                     <option value="">Toutes</option>
@@ -39,6 +38,7 @@
                     Filtrer
                 </button>
             </form>
+
         </div>
 
         {% for product in products %}

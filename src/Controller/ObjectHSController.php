@@ -154,7 +154,7 @@ class ObjectHSController extends AbstractController
         if ($objectHS->getClient() !== $user) {
             throw $this->createAccessDeniedException('Vous n\'avez pas accès à cet objet.');
         }
-        dump($objectHS->getDates()->get(0)->getAddress());
+        dump($objectHS->getDates()->get(0));
 
         return $this->render('object_hs/show.html.twig', [
             'object_h' => $objectHS,

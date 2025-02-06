@@ -63,35 +63,60 @@ final class ProductController extends AbstractController
 
     #[Route('/products/presta', name: 'app_product_index_presta', methods: ['GET'])]
     #[IsGranted('ROLE_PRESTA')]
-    public function indexPresta(ProductRepository $productRepository, Request $request, Security $security): Response
-    {
+    public function indexPresta(
+        ProductRepository $productRepository,
+        CategoryRepository $categoryRepository,
+        TagRepository $tagRepository,
+        Request $request,
+        Security $security
+    ): Response {
+        $this->denyAccessUnlessGranted('product_management');
+
+        // Récupérer la page actuelle
         $page = $request->query->getInt('page', 1);
         $limit = 10;
+
+        // Récupération des filtres depuis la requête GET
+        $categoryId = $request->query->get('category');
+        $tagId = $request->query->get('tag');
+
+        // Vérifier si ce sont bien des entiers avant de les passer au repository
+        $categoryId = is_numeric($categoryId) ? (int) $categoryId : null;
+        $tagId = is_numeric($tagId) ? (int) $tagId : null;
 
         // Récupérer le Provider lié à l'utilisateur connecté
         /** @var Provider $provider */
         $provider = $security->getUser();
-        dump($provider);
 
         // Vérifiez si le provider existe
         if (!$provider) {
             throw $this->createNotFoundException('Provider not found for the current user.');
         }
 
-        // Appel à la méthode dans le repository
-        $pagination = $productRepository->findPaginatedProductsByProvider($page, $limit, $provider->getId());
+        // Récupération des produits avec les filtres et la pagination
+        $pagination = $productRepository->findPaginatedProductsByProvider($page, $limit, $provider->getId(), $categoryId, $tagId);
+
+        // Récupération de toutes les catégories et tags pour le formulaire de filtrage
+        $categories = $categoryRepository->findAll();
+        $tags = $tagRepository->findAll();
 
         return $this->render('product/index.html.twig', [
             'products' => $pagination['items'],
             'currentPage' => $page,
             'totalPages' => $pagination['totalPages'],
+            'categories' => $categories,
+            'tags' => $tags,
+            'selectedCategory' => $categoryId,
+            'selectedTag' => $tagId
         ]);
     }
+
 
 
     #[Route('/new', name: 'app_product_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, Security $security): Response
     {
+        $this->denyAccessUnlessGranted('product_management');
         // Récupérer le Provider lié à l'utilisateur connecté
         /** @var Provider $provider */
         $provider = $security->getUser();
@@ -148,7 +173,7 @@ final class ProductController extends AbstractController
 
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_product_index');
+            return $this->redirectToRoute('app_product_index_presta');
         }
 
         return $this->render('product/new.html.twig', [
@@ -174,6 +199,8 @@ final class ProductController extends AbstractController
     #[Route('/{id}/edit', name: 'app_product_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Product $product, EntityManagerInterface $entityManager, Security $security): Response
     {
+        $this->denyAccessUnlessGranted('product_management');
+
         /** @var Provider $provider */
         $provider = $security->getUser();
 
@@ -217,6 +244,8 @@ final class ProductController extends AbstractController
     #[Route('/{id}', name: 'app_product_delete', methods: ['POST'])]
     public function delete(Request $request, Product $product, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('product_management');
+
         if ($this->isCsrfTokenValid('delete'.$product->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($product);
             $entityManager->flush();

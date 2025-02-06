@@ -70,19 +70,42 @@ class ProductRepository extends ServiceEntityRepository
         ];
     }
 
-    public function findPaginatedProductsByProvider(int $page, int $limit, int $providerId): array
+    public function findPaginatedProductsByProvider(int $page, int $limit, int $providerId, ?int $categoryId = null, ?int $tagId = null): array
     {
         $offset = ($page - 1) * $limit;
 
-        $query = $this->createQueryBuilder('p')
+        $queryBuilder = $this->createQueryBuilder('p')
             ->where('p.isDeleted = false')
             ->andWhere('p.provider = :providerId')
             ->setParameter('providerId', $providerId)
-            ->orderBy('p.id', 'DESC')
-            ->setFirstResult($offset)
-            ->setMaxResults($limit)
-            ->getQuery();
+            ->leftJoin('p.categories', 'c')
+            ->leftJoin('p.tags', 't')
+            ->addSelect('c', 't');
 
+        // Filtre par tag uniquement
+        if ($tagId && !$categoryId) {
+            $queryBuilder->andWhere('t.id = :tagId')
+                ->setParameter('tagId', $tagId);
+        }
+
+        // Filtre par catégorie uniquement
+        if ($categoryId && !$tagId) {
+            $queryBuilder->andWhere('c.id = :categoryId')
+                ->setParameter('categoryId', $categoryId);
+        }
+
+        // Filtre par catégorie et tag
+        if ($categoryId && $tagId) {
+            $queryBuilder->andWhere('c.id = :categoryId AND t.id = :tagId')
+                ->setParameter('categoryId', $categoryId)
+                ->setParameter('tagId', $tagId);
+        }
+
+        $queryBuilder->orderBy('p.id', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit);
+
+        $query = $queryBuilder->getQuery();
         $paginator = new Paginator($query);
 
         return [
@@ -91,31 +114,4 @@ class ProductRepository extends ServiceEntityRepository
             'totalPages' => ceil(count($paginator) / $limit),
         ];
     }
-
-
-
-    //    /**
-    //     * @return Product[] Returns an array of Product objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('p.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Product
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
 }
