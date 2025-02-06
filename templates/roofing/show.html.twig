@@ -45,11 +45,12 @@
                        class="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600">
                         Retour à la liste
                     </a>
-
-                    <a href="{{ path('app_home_repair_edit', {'id': roofing.id}) }}"
-                       class="bg-warning-500 text-white px-4 py-2 rounded-lg hover:bg-warning-600">
-                        Modifier
-                    </a>
+                    {% if roofing.status.value == 'pending' %}
+                        <a href="{{ path('app_home_repair_edit', {'id': roofing.id}) }}"
+                           class="bg-warning-500 text-white px-4 py-2 rounded-lg hover:bg-warning-600">
+                            Modifier
+                        </a>
+                    {% endif %}
                 </div>
             </div>
 

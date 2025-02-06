@@ -15,6 +15,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/painting')]
@@ -145,6 +146,10 @@ final class PaintingController extends AbstractController
 
         if (!$user || $painting->getClient() !== $user) {
             throw $this->createAccessDeniedException('Vous n\'avez pas accès à ce projet.');
+        }
+
+        if ($painting->getStatus()->value !== 'pending') {
+            throw new AccessDeniedException('Vous ne pouvez pas modifier un painting qui n\'est plus en attente.');
         }
 
         if ($this->isCsrfTokenValid('delete'.$painting->getId(), $request->getPayload()->getString('_token'))) {

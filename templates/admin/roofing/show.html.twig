@@ -45,6 +45,23 @@
                        class="bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600">
                         Retour à la liste
                     </a>
+                    {% if roofing.status.value == 'pending' %}
+                        <!-- Bouton Valider -->
+                        <form method="POST" action="{{ path('app_request_validate_admin', { id: roofing.id }) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('validate' ~ roofing.id) }}">
+                            <button type="submit" class="bg-success-600 text-white px-4 py-2 rounded-lg hover:bg-success-700">
+                                Valider
+                            </button>
+                        </form>
+
+                        <!-- Bouton Rejeter -->
+                        <form method="POST" action="{{ path('app_request_reject_admin', { id: roofing.id }) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('reject' ~ roofing.id) }}">
+                            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+                                Rejeter
+                            </button>
+                        </form>
+                    {% endif %}
                 </div>
             </div>
 

@@ -163,7 +163,8 @@ class CartController extends AbstractController
         return new JsonResponse([
             'success' => true,
             'newQuantity' => $newQuantity,
-            'totalPrice' => number_format($totalPrice, 2, ',', ' ')
+            'totalPrice' => round($totalPrice, 2)
         ]);
+
     }
 }

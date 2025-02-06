@@ -32,7 +32,6 @@ class ObjectHSController extends AbstractController
         $user = $security->getUser();
 
         $objectHS = $objectHSRepository->findByUser($user);
-
         return $this->render('object_hs/index.html.twig', [
             'object_hs' => $objectHS,
         ]);
@@ -173,6 +172,10 @@ class ObjectHSController extends AbstractController
             throw new AccessDeniedException('Vous n\'avez pas le droit de modifier cet objet.');
         }
 
+        if ($objectHS->getStatus()->value !== 'pending') {
+            throw new AccessDeniedException('Vous ne pouvez pas modifier un objet qui n\'est plus en attente.');
+        }
+
         $this->denyAccessUnlessGranted('repair_objects');
         $formObjectHS = $this->createForm(ObjectHSType::class, $objectHS);
         $formObjectHS->handleRequest($request);
@@ -207,6 +210,6 @@ class ObjectHSController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_object_h_s_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_object_hs_index', [], Response::HTTP_SEE_OTHER);
     }
 }
