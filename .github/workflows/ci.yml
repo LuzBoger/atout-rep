@@ -19,6 +19,9 @@ jobs:
           php-version: '8.3'
           extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, json, pdo
 
+      - name: Set environment variables
+        run: echo "DATABASE_URL=sqlite:///%kernel.project_dir%/var/data.db" >> $GITHUB_ENV
+
       - name: Cache Composer dependencies
         uses: actions/cache@v3
         with:
